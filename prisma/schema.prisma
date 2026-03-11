@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String        @id @default(cuid())
+  nome         String
+  email        String        @unique
+  senha        String
+  role         String        @default("user")
+  createdAt    DateTime      @default(now())
+  solicitacoes Solicitacao[]
+}
+
+model Product {
+  id            String          @id @default(cuid())
+  nome          String
+  sku           String?         @unique
+  codigoBarras  String?         @unique
+  categoria     String?
+  custo         Float?
+  preco         Float?
+  estoqueAtual  Int             @default(0)
+  estoqueMinimo Int             @default(0)
+  createdAt     DateTime        @default(now())
+  movements     StockMovement[]
+  solicitacoes  Solicitacao[]
+}
+
+model StockMovement {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tipo       String
+  quantidade Int
+  observacao String?
+  createdAt  DateTime @default(now())
+}
+
+model Solicitacao {
+  id         String   @id @default(cuid())
+  userId     String
+  productId  String
+  quantidade Int
+  status     String   @default("pendente")
+  createdAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,94 @@
+import { NextRequest, NextResponse } from "next/server";
+
+type SessionUser = {
+  id: string;
+  nome: string;
+  email: string;
+  role: "admin" | "user";
+};
+
+function getSession(request: NextRequest): SessionUser | null {
+  const cookie = request.cookies.get("session")?.value;
+
+  if (!cookie) return null;
+
+  try {
+    return JSON.parse(cookie) as SessionUser;
+  } catch {
+    return null;
+  }
+}
+
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const session = getSession(request);
+
+  const isAuthPage = pathname === "/login";
+  const isPublicPage = pathname === "/";
+  const isApiRoute = pathname.startsWith("/api");
+
+  if (isPublicPage || isAuthPage || isApiRoute) {
+    return NextResponse.next();
+  }
+
+  const protectedRoutes = [
+    "/dashboard",
+    "/produtos",
+    "/movimentacoes",
+    "/solicitacoes",
+    "/usuarios",
+    "/minhas-solicitacoes",
+    "/perfil",
+  ];
+
+  const isProtected = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  if (isProtected && !session) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (isAuthPage && session) {
+    const redirectUrl =
+      session.role === "admin" ? "/dashboard" : "/minhas-solicitacoes";
+
+    return NextResponse.redirect(new URL(redirectUrl, request.url));
+  }
+
+  if (session?.role === "user") {
+    const blockedForUser = [
+      "/dashboard",
+      "/produtos",
+      "/movimentacoes",
+      "/solicitacoes",
+      "/usuarios",
+    ];
+
+    const isBlocked = blockedForUser.some((route) =>
+      pathname.startsWith(route)
+    );
+
+    if (isBlocked) {
+      return NextResponse.redirect(
+        new URL("/minhas-solicitacoes", request.url)
+      );
+    }
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: [
+    "/",
+    "/login",
+    "/dashboard/:path*",
+    "/produtos/:path*",
+    "/movimentacoes/:path*",
+    "/solicitacoes/:path*",
+    "/usuarios/:path*",
+    "/minhas-solicitacoes/:path*",
+    "/perfil/:path*",
+  ],
+};
