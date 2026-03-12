@@ -20,6 +20,7 @@ model Empresa {
   solicitacoes  Solicitacao[]
   fornecedores  Fornecedor[]
   nfeImports    NfeImport[]
+  auditLogs AuditLog[]
 }
 
 model User {
@@ -33,6 +34,7 @@ model User {
 
   empresa      Empresa       @relation(fields: [empresaId], references: [id], onDelete: Cascade)
   solicitacoes Solicitacao[]
+  auditLogs AuditLog[]
 
   @@unique([empresaId, email])
   @@index([empresaId])
@@ -175,4 +177,23 @@ model UserInvite {
   @@index([empresaId])
   @@index([email])
   @@index([token])
+}
+model AuditLog {
+  id         String   @id @default(cuid())
+  empresaId  String
+  userId     String
+  acao       String
+  entidade   String
+  entidadeId String?
+  descricao  String?
+  createdAt  DateTime @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([empresaId])
+  @@index([userId])
+  @@index([acao])
+  @@index([entidade])
+  @@index([createdAt])
 }

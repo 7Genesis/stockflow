@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -64,6 +65,13 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
       <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+        <Link
+          href="/"
+          className="mb-6 inline-block text-sm text-zinc-500 transition hover:text-zinc-700"
+        >
+          ← Voltar para a página inicial
+        </Link>
+
         <h1 className="mb-2 text-3xl font-bold text-zinc-900">StockFlow</h1>
         <p className="mb-6 text-sm text-zinc-500">Entre no sistema</p>
 
@@ -75,6 +83,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
+              placeholder="seu@email.com"
             />
           </div>
 
@@ -85,6 +94,7 @@ export default function LoginPage() {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
+              placeholder="Digite sua senha"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   entrar();
@@ -97,7 +107,7 @@ export default function LoginPage() {
             type="button"
             onClick={entrar}
             disabled={carregando}
-            className="w-full rounded-xl bg-zinc-900 px-6 py-3 text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-xl bg-zinc-900 px-6 py-3 text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {carregando ? "Entrando..." : "Entrar"}
           </button>
@@ -105,7 +115,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => router.push("/registro")}
-            className="w-full rounded-xl border border-zinc-300 px-6 py-3 text-zinc-700 hover:bg-zinc-50"
+            className="w-full rounded-xl border border-zinc-300 px-6 py-3 text-zinc-700 transition hover:bg-zinc-50"
           >
             Criar empresa
           </button>

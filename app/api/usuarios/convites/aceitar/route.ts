@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { registrarAuditoria } from "@/lib/audit";
 
 type AceitarBody = {
   token?: string;
@@ -96,6 +97,15 @@ export async function POST(req: Request) {
       });
 
       return novoUsuario;
+    });
+
+    await registrarAuditoria({
+      empresaId: convite.empresaId,
+      userId: usuario.id,
+      acao: "aprovar",
+      entidade: "convite",
+      entidadeId: convite.id,
+      descricao: `Convite aceito por ${usuario.email}`,
     });
 
     return NextResponse.json({

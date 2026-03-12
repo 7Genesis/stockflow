@@ -1,12 +1,13 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+import { registrarAuditoria } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
 type SolicitacaoBody = {
   productId?: string;
-  quantidade?: string | number;
+  quantidade?: number | string;
 };
 
 export async function GET() {
@@ -89,6 +90,7 @@ export async function POST(req: Request) {
       select: {
         id: true,
         nome: true,
+        estoqueAtual: true,
       },
     });
 
@@ -101,23 +103,11 @@ export async function POST(req: Request) {
 
     const solicitacao = await prisma.solicitacao.create({
       data: {
+        empresaId: usuario.empresaId,
+        userId: usuario.id,
+        productId,
         quantidade,
         status: "pendente",
-        empresa: {
-          connect: {
-            id: usuario.empresaId,
-          },
-        },
-        user: {
-          connect: {
-            id: usuario.id,
-          },
-        },
-        product: {
-          connect: {
-            id: productId,
-          },
-        },
       },
       include: {
         user: {
@@ -136,6 +126,15 @@ export async function POST(req: Request) {
           },
         },
       },
+    });
+
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "criar",
+      entidade: "solicitacao",
+      entidadeId: solicitacao.id,
+      descricao: `Solicitação criada para o produto ${produto.nome} - quantidade: ${quantidade}`,
     });
 
     return NextResponse.json(solicitacao, { status: 201 });

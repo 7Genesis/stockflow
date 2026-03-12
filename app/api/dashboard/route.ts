@@ -1,14 +1,15 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-type GraficoItem = {
-  data: string;
-  entrada: number;
-  saida: number;
-};
+function formatarMesAno(data: Date) {
+  return data.toLocaleDateString("pt-BR", {
+    month: "2-digit",
+    year: "numeric",
+  });
+}
 
 export async function GET() {
   try {
@@ -18,104 +19,174 @@ export async function GET() {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
-    const produtos = await prisma.product.findMany({
-      where: {
-        empresaId: usuario.empresaId,
-      },
-      orderBy: {
-        nome: "asc",
-      },
-    });
-
-    const movimentacoes = await prisma.stockMovement.findMany({
-      where: {
-        empresaId: usuario.empresaId,
-      },
-      include: {
-        product: {
-          select: {
-            nome: true,
+    const [
+      produtos,
+      movimentacoes,
+      solicitacoesPendentes,
+      totalProdutos,
+    ] = await Promise.all([
+      prisma.product.findMany({
+        where: {
+          empresaId: usuario.empresaId,
+        },
+        select: {
+          id: true,
+          nome: true,
+          preco: true,
+          estoqueAtual: true,
+          estoqueMinimo: true,
+          createdAt: true,
+        },
+      }),
+      prisma.stockMovement.findMany({
+        where: {
+          empresaId: usuario.empresaId,
+        },
+        include: {
+          product: {
+            select: {
+              id: true,
+              nome: true,
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: 20,
-    });
-
-    const movimentacoesGrafico = await prisma.stockMovement.findMany({
-      where: {
-        empresaId: usuario.empresaId,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
-    });
-
-    const solicitacoesPendentes = await prisma.solicitacao.count({
-      where: {
-        empresaId: usuario.empresaId,
-        status: "pendente",
-      },
-    });
-
-    const produtosEstoqueBaixo = produtos
-      .filter((produto) => produto.estoqueAtual <= produto.estoqueMinimo)
-      .sort((a, b) => {
-        const percentualA =
-          a.estoqueMinimo > 0 ? a.estoqueAtual / a.estoqueMinimo : 0;
-        const percentualB =
-          b.estoqueMinimo > 0 ? b.estoqueAtual / b.estoqueMinimo : 0;
-
-        return percentualA - percentualB;
-      });
-
-    const totalProdutos = produtos.length;
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.solicitacao.count({
+        where: {
+          empresaId: usuario.empresaId,
+          status: "pendente",
+        },
+      }),
+      prisma.product.count({
+        where: {
+          empresaId: usuario.empresaId,
+        },
+      }),
+    ]);
 
     const totalItensEstoque = produtos.reduce(
-      (total, produto) => total + produto.estoqueAtual,
+      (acc, produto) => acc + produto.estoqueAtual,
       0
     );
 
-    const totalEstoqueBaixo = produtosEstoqueBaixo.length;
+    const totalEstoqueBaixo = produtos.filter(
+      (produto) => produto.estoqueAtual <= produto.estoqueMinimo
+    ).length;
 
-    const valorTotalEstoque = produtos.reduce((total, produto) => {
-      const preco = produto.preco ?? 0;
-      return total + preco * produto.estoqueAtual;
+    const valorTotalEstoque = produtos.reduce((acc, produto) => {
+      return acc + (produto.preco ?? 0) * produto.estoqueAtual;
     }, 0);
 
-    const totalEntradas = movimentacoesGrafico
+    const totalEntradas = movimentacoes
       .filter((mov) => mov.tipo === "entrada")
-      .reduce((total, mov) => total + mov.quantidade, 0);
+      .reduce((acc, mov) => acc + mov.quantidade, 0);
 
-    const totalSaidas = movimentacoesGrafico
+    const totalSaidas = movimentacoes
       .filter((mov) => mov.tipo === "saida")
-      .reduce((total, mov) => total + mov.quantidade, 0);
+      .reduce((acc, mov) => acc + mov.quantidade, 0);
 
     const saldoMovimentacoes = totalEntradas - totalSaidas;
 
-    const graficoMap = new Map<string, GraficoItem>();
+    const produtosEstoqueBaixo = produtos
+      .filter((produto) => produto.estoqueAtual <= produto.estoqueMinimo)
+      .sort((a, b) => a.estoqueAtual - b.estoqueAtual)
+      .slice(0, 10)
+      .map((produto) => ({
+        id: produto.id,
+        nome: produto.nome,
+        estoqueAtual: produto.estoqueAtual,
+        estoqueMinimo: produto.estoqueMinimo,
+      }));
 
-    movimentacoesGrafico.forEach((movimentacao) => {
-      const data = new Date(movimentacao.createdAt).toLocaleDateString("pt-BR");
+    const ultimasMovimentacoes = movimentacoes.slice(0, 8).map((mov) => ({
+      id: mov.id,
+      tipo: mov.tipo,
+      quantidade: mov.quantidade,
+      createdAt: mov.createdAt,
+      product: {
+        nome: mov.product.nome,
+      },
+    }));
 
-      if (!graficoMap.has(data)) {
-        graficoMap.set(data, {
-          data,
-          entrada: 0,
-          saida: 0,
-        });
-      }
+    const graficoMap = new Map<
+      string,
+      { data: string; entrada: number; saida: number }
+    >();
 
-      const item = graficoMap.get(data)!;
+    for (const mov of movimentacoes) {
+      const chave = formatarMesAno(new Date(mov.createdAt));
 
-      if (movimentacao.tipo === "entrada") {
-        item.entrada += movimentacao.quantidade;
+      const atual = graficoMap.get(chave) ?? {
+        data: chave,
+        entrada: 0,
+        saida: 0,
+      };
+
+      if (mov.tipo === "entrada") {
+        atual.entrada += mov.quantidade;
       } else {
-        item.saida += movimentacao.quantidade;
+        atual.saida += mov.quantidade;
       }
-    });
+
+      graficoMap.set(chave, atual);
+    }
+
+    const graficoMovimentacoes = Array.from(graficoMap.values()).reverse();
+
+    const porProdutoMap = new Map<
+      string,
+      { productId: string; nome: string; total: number }
+    >();
+
+    for (const mov of movimentacoes) {
+      const atual = porProdutoMap.get(mov.product.id) ?? {
+        productId: mov.product.id,
+        nome: mov.product.nome,
+        total: 0,
+      };
+
+      atual.total += mov.quantidade;
+      porProdutoMap.set(mov.product.id, atual);
+    }
+
+    const produtosMaisMovimentados = Array.from(porProdutoMap.values())
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5);
+
+    const produtosParados = produtos
+      .filter((produto) => {
+        return !movimentacoes.some((mov) => mov.productId === produto.id);
+      })
+      .slice(0, 5)
+      .map((produto) => ({
+        id: produto.id,
+        nome: produto.nome,
+        estoqueAtual: produto.estoqueAtual,
+      }));
+
+    const consumoMensalMap = new Map<
+      string,
+      { mes: string; totalSaidas: number }
+    >();
+
+    for (const mov of movimentacoes) {
+      const mes = formatarMesAno(new Date(mov.createdAt));
+      const atual = consumoMensalMap.get(mes) ?? {
+        mes,
+        totalSaidas: 0,
+      };
+
+      if (mov.tipo === "saida") {
+        atual.totalSaidas += mov.quantidade;
+      }
+
+      consumoMensalMap.set(mes, atual);
+    }
+
+    const consumoMensal = Array.from(consumoMensalMap.values()).reverse();
 
     return NextResponse.json({
       totalProdutos,
@@ -126,9 +197,12 @@ export async function GET() {
       totalEntradas,
       totalSaidas,
       saldoMovimentacoes,
-      produtosEstoqueBaixo: produtosEstoqueBaixo.slice(0, 10),
-      ultimasMovimentacoes: movimentacoes,
-      graficoMovimentacoes: Array.from(graficoMap.values()),
+      produtosEstoqueBaixo,
+      ultimasMovimentacoes,
+      graficoMovimentacoes,
+      produtosMaisMovimentados,
+      produtosParados,
+      consumoMensal,
     });
   } catch (error) {
     console.error("Erro ao carregar dashboard:", error);

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+import { registrarAuditoria } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -106,8 +107,8 @@ export async function POST(req: Request) {
       );
     }
 
-    await prisma.$transaction(async (tx) => {
-      await tx.stockMovement.create({
+    const movimentacao = await prisma.$transaction(async (tx) => {
+      const novaMovimentacao = await tx.stockMovement.create({
         data: {
           empresaId: usuario.empresaId,
           productId,
@@ -128,9 +129,20 @@ export async function POST(req: Request) {
               : { decrement: quantidade },
         },
       });
+
+      return novaMovimentacao;
     });
 
-    return NextResponse.json({ success: true });
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "criar",
+      entidade: "movimentacao",
+      entidadeId: movimentacao.id,
+      descricao: `Movimentação de ${tipo} no produto ${produto.nome} - quantidade: ${quantidade}`,
+    });
+
+    return NextResponse.json({ success: true, movimentacao });
   } catch (error) {
     console.error("Erro ao registrar movimentação:", error);
 

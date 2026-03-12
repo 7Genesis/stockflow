@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+import { registrarAuditoria } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -180,6 +181,62 @@ export async function POST(req: Request) {
       codigoBarras = await gerarCodigoBarrasUnico(usuario.empresaId);
     }
 
+    const custo =
+      body.custo !== null &&
+      body.custo !== undefined &&
+      String(body.custo).trim() !== ""
+        ? Number(body.custo)
+        : null;
+
+    const preco =
+      body.preco !== null &&
+      body.preco !== undefined &&
+      String(body.preco).trim() !== ""
+        ? Number(body.preco)
+        : null;
+
+    const estoqueAtual =
+      body.estoqueAtual !== null &&
+      body.estoqueAtual !== undefined &&
+      String(body.estoqueAtual).trim() !== ""
+        ? Number(body.estoqueAtual)
+        : 0;
+
+    const estoqueMinimo =
+      body.estoqueMinimo !== null &&
+      body.estoqueMinimo !== undefined &&
+      String(body.estoqueMinimo).trim() !== ""
+        ? Number(body.estoqueMinimo)
+        : 0;
+
+    if (custo !== null && Number.isNaN(custo)) {
+      return NextResponse.json(
+        { error: "Custo inválido" },
+        { status: 400 }
+      );
+    }
+
+    if (preco !== null && Number.isNaN(preco)) {
+      return NextResponse.json(
+        { error: "Preço inválido" },
+        { status: 400 }
+      );
+    }
+
+    if (Number.isNaN(estoqueAtual) || estoqueAtual < 0) {
+      return NextResponse.json(
+        { error: "Estoque atual inválido" },
+        { status: 400 }
+      );
+    }
+
+    if (Number.isNaN(estoqueMinimo) || estoqueMinimo < 0) {
+      return NextResponse.json(
+        { error: "Estoque mínimo inválido" },
+        { status: 400 }
+      );
+    }
+
     const produto = await prisma.product.create({
       data: {
         empresaId: usuario.empresaId,
@@ -187,31 +244,20 @@ export async function POST(req: Request) {
         sku,
         codigoBarras,
         categoria,
-        custo:
-          body.custo !== null &&
-          body.custo !== undefined &&
-          String(body.custo).trim() !== ""
-            ? Number(body.custo)
-            : null,
-        preco:
-          body.preco !== null &&
-          body.preco !== undefined &&
-          String(body.preco).trim() !== ""
-            ? Number(body.preco)
-            : null,
-        estoqueAtual:
-          body.estoqueAtual !== null &&
-          body.estoqueAtual !== undefined &&
-          String(body.estoqueAtual).trim() !== ""
-            ? Number(body.estoqueAtual)
-            : 0,
-        estoqueMinimo:
-          body.estoqueMinimo !== null &&
-          body.estoqueMinimo !== undefined &&
-          String(body.estoqueMinimo).trim() !== ""
-            ? Number(body.estoqueMinimo)
-            : 0,
+        custo,
+        preco,
+        estoqueAtual,
+        estoqueMinimo,
       },
+    });
+
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "criar",
+      entidade: "produto",
+      entidadeId: produto.id,
+      descricao: `Produto criado: ${produto.nome}`,
     });
 
     return NextResponse.json(produto, { status: 201 });

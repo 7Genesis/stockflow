@@ -29,6 +29,11 @@ type AlertasResponse = {
   produtos: AlertaEstoque[];
 };
 
+type NavItem = {
+  href: string;
+  label: string;
+};
+
 function getSessionUser(): SessionUser | null {
   if (typeof document === "undefined") return null;
 
@@ -48,11 +53,6 @@ function getSessionUser(): SessionUser | null {
     return null;
   }
 }
-
-type NavItem = {
-  href: string;
-  label: string;
-};
 
 export default function PainelLayout({
   children,
@@ -158,9 +158,11 @@ export default function PainelLayout({
       { href: "/fornecedores", label: "Fornecedores" },
       { href: "/empresa", label: "Empresa" },
       { href: "/relatorios/fornecedores", label: "Relatório Fornecedores" },
+      { href: "/relatorios/movimentacoes", label: "Relatório Movimentações" },
       { href: "/solicitacoes", label: "Solicitações" },
       { href: "/usuarios", label: "Usuários" },
       { href: "/usuarios/convites", label: "Convites" },
+      { href: "/atividade", label: "Atividade" },
     ],
     []
   );
@@ -197,16 +199,12 @@ export default function PainelLayout({
         <aside className="border-r border-zinc-200 bg-white">
           <div className="flex h-full flex-col">
             <div className="border-b border-zinc-200 px-6 py-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
-                    StockFlow
-                  </h1>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    {empresa?.nome || "Gestão inteligente de estoque"}
-                  </p>
-                </div>
-              </div>
+              <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+                StockFlow
+              </h1>
+              <p className="mt-1 text-sm text-zinc-500">
+                {empresa?.nome || "Gestão inteligente de estoque"}
+              </p>
             </div>
 
             <div className="px-6 py-6">
@@ -330,7 +328,7 @@ export default function PainelLayout({
 
                   <a
                     href="/produtos"
-                    className="rounded-xl bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"
+                    className="rounded-xl bg-red-600 px-4 py-2 text-sm text-white transition hover:bg-red-700"
                   >
                     Ver produtos
                   </a>

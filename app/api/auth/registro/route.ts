@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
+export const dynamic = "force-dynamic";
+
 type RegistroBody = {
   empresaNome?: string;
   empresaCnpj?: string;
@@ -33,7 +35,7 @@ export async function POST(req: Request) {
 
     if (senha.length < 6) {
       return NextResponse.json(
-        { error: "A senha deve ter pelo menos 6 caracteres" },
+        { error: "A senha deve ter pelo menos 6 caracteres." },
         { status: 400 }
       );
     }
@@ -50,10 +52,26 @@ export async function POST(req: Request) {
 
       if (empresaExistente) {
         return NextResponse.json(
-          { error: "Já existe uma empresa cadastrada com esse CNPJ" },
+          { error: "Já existe uma empresa cadastrada com esse CNPJ." },
           { status: 400 }
         );
       }
+    }
+
+    const usuarioExistente = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (usuarioExistente) {
+      return NextResponse.json(
+        { error: "Já existe um usuário com esse email." },
+        { status: 400 }
+      );
     }
 
     const senhaHash = await bcrypt.hash(senha, 10);
@@ -63,6 +81,11 @@ export async function POST(req: Request) {
         data: {
           nome: empresaNome,
           cnpj: empresaCnpj || null,
+        },
+        select: {
+          id: true,
+          nome: true,
+          cnpj: true,
         },
       });
 
@@ -101,17 +124,13 @@ export async function POST(req: Request) {
 
     const response = NextResponse.json({
       success: true,
-      empresa: {
-        id: resultado.empresa.id,
-        nome: resultado.empresa.nome,
-        cnpj: resultado.empresa.cnpj,
-      },
+      empresa: resultado.empresa,
       usuario: sessionUser,
     });
 
     response.cookies.set("session", sessionValue, {
       httpOnly: false,
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24,
@@ -123,13 +142,13 @@ export async function POST(req: Request) {
 
     if (error?.code === "P2002") {
       return NextResponse.json(
-        { error: "Já existe um registro com esses dados" },
+        { error: "Já existe um registro com esses dados." },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: "Erro ao registrar empresa" },
+      { error: "Erro ao registrar empresa." },
       { status: 500 }
     );
   }

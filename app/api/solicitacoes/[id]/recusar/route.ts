@@ -1,11 +1,17 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+import { registrarAuditoria } from "@/lib/audit";
 
-export async function PATCH(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const dynamic = "force-dynamic";
+
+type Params = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export async function PATCH(_req: Request, { params }: Params) {
   try {
     const usuario = await getSessionUser();
 
@@ -27,9 +33,13 @@ export async function PATCH(
         id,
         empresaId: usuario.empresaId,
       },
-      select: {
-        id: true,
-        status: true,
+      include: {
+        product: {
+          select: {
+            id: true,
+            nome: true,
+          },
+        },
       },
     });
 
@@ -47,14 +57,33 @@ export async function PATCH(
       );
     }
 
-    await prisma.solicitacao.update({
-      where: { id: solicitacao.id },
+    const atualizado = await prisma.solicitacao.update({
+      where: {
+        id: solicitacao.id,
+      },
       data: {
         status: "recusada",
       },
+      include: {
+        product: {
+          select: {
+            id: true,
+            nome: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json({ success: true });
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "recusar",
+      entidade: "solicitacao",
+      entidadeId: solicitacao.id,
+      descricao: `Solicitação recusada para o produto ${solicitacao.product.nome}`,
+    });
+
+    return NextResponse.json(atualizado);
   } catch (error) {
     console.error("Erro ao recusar solicitação:", error);
 

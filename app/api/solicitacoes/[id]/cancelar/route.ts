@@ -1,11 +1,17 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+import { registrarAuditoria } from "@/lib/audit";
 
-export async function PATCH(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const dynamic = "force-dynamic";
+
+type Params = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export async function PATCH(_req: Request, { params }: Params) {
   try {
     const usuario = await getSessionUser();
 
@@ -20,10 +26,13 @@ export async function PATCH(
         id,
         empresaId: usuario.empresaId,
       },
-      select: {
-        id: true,
-        userId: true,
-        status: true,
+      include: {
+        product: {
+          select: {
+            id: true,
+            nome: true,
+          },
+        },
       },
     });
 
@@ -34,31 +43,50 @@ export async function PATCH(
       );
     }
 
-    const podeCancelar =
-      usuario.role === "admin" || solicitacao.userId === usuario.id;
-
-    if (!podeCancelar) {
-      return NextResponse.json(
-        { error: "Você não tem permissão para cancelar esta solicitação" },
-        { status: 403 }
-      );
-    }
-
     if (solicitacao.status !== "pendente") {
       return NextResponse.json(
-        { error: "Só é possível cancelar solicitações pendentes" },
+        { error: "Somente solicitações pendentes podem ser canceladas" },
         { status: 400 }
       );
     }
 
-    const atualizada = await prisma.solicitacao.update({
-      where: { id: solicitacao.id },
+    const isAdmin = usuario.role === "admin";
+    const isDonoDaSolicitacao = solicitacao.userId === usuario.id;
+
+    if (!isAdmin && !isDonoDaSolicitacao) {
+      return NextResponse.json(
+        { error: "Sem permissão para cancelar esta solicitação" },
+        { status: 403 }
+      );
+    }
+
+    const atualizado = await prisma.solicitacao.update({
+      where: {
+        id: solicitacao.id,
+      },
       data: {
         status: "cancelada",
       },
+      include: {
+        product: {
+          select: {
+            id: true,
+            nome: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json(atualizada);
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "cancelar",
+      entidade: "solicitacao",
+      entidadeId: solicitacao.id,
+      descricao: `Solicitação cancelada para o produto ${solicitacao.product.nome}`,
+    });
+
+    return NextResponse.json(atualizado);
   } catch (error) {
     console.error("Erro ao cancelar solicitação:", error);
 

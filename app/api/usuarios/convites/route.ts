@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { registrarAuditoria } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -85,10 +86,7 @@ export async function POST(req: Request) {
     }
 
     if (role !== "admin" && role !== "user") {
-      return NextResponse.json(
-        { error: "Perfil inválido" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Perfil inválido" }, { status: 400 });
     }
 
     const usuarioExistente = await prisma.user.findFirst({
@@ -144,6 +142,15 @@ export async function POST(req: Request) {
         expiresAt: true,
         createdAt: true,
       },
+    });
+
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "criar",
+      entidade: "convite",
+      entidadeId: convite.id,
+      descricao: `Convite criado para ${convite.email} com perfil ${convite.role}`,
     });
 
     return NextResponse.json(convite, { status: 201 });

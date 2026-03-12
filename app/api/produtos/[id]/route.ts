@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+import { registrarAuditoria } from "@/lib/audit";
 
 type ProdutoBody = {
   nome?: string;
@@ -41,6 +42,7 @@ export async function PUT(
       },
       select: {
         id: true,
+        nome: true,
       },
     });
 
@@ -92,6 +94,34 @@ export async function PUT(
       }
     }
 
+    const preco =
+      body.preco !== null &&
+      body.preco !== undefined &&
+      String(body.preco).trim() !== ""
+        ? Number(body.preco)
+        : null;
+
+    const estoqueMinimo =
+      body.estoqueMinimo !== null &&
+      body.estoqueMinimo !== undefined &&
+      String(body.estoqueMinimo).trim() !== ""
+        ? Number(body.estoqueMinimo)
+        : 0;
+
+    if (preco !== null && Number.isNaN(preco)) {
+      return NextResponse.json(
+        { error: "Preço inválido" },
+        { status: 400 }
+      );
+    }
+
+    if (Number.isNaN(estoqueMinimo) || estoqueMinimo < 0) {
+      return NextResponse.json(
+        { error: "Estoque mínimo inválido" },
+        { status: 400 }
+      );
+    }
+
     const produto = await prisma.product.update({
       where: { id },
       data: {
@@ -99,19 +129,18 @@ export async function PUT(
         categoria: String(body.categoria ?? "").trim() || null,
         sku,
         codigoBarras,
-        preco:
-          body.preco !== null &&
-          body.preco !== undefined &&
-          String(body.preco).trim() !== ""
-            ? Number(body.preco)
-            : null,
-        estoqueMinimo:
-          body.estoqueMinimo !== null &&
-          body.estoqueMinimo !== undefined &&
-          String(body.estoqueMinimo).trim() !== ""
-            ? Number(body.estoqueMinimo)
-            : 0,
+        preco,
+        estoqueMinimo,
       },
+    });
+
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "editar",
+      entidade: "produto",
+      entidadeId: produto.id,
+      descricao: `Produto editado: ${produto.nome}`,
     });
 
     return NextResponse.json(produto);
@@ -145,6 +174,7 @@ export async function DELETE(
       },
       select: {
         id: true,
+        nome: true,
       },
     });
 
@@ -181,6 +211,15 @@ export async function DELETE(
           id,
         },
       });
+    });
+
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "excluir",
+      entidade: "produto",
+      entidadeId: produtoExistente.id,
+      descricao: `Produto excluído: ${produtoExistente.nome}`,
     });
 
     return NextResponse.json({ success: true });

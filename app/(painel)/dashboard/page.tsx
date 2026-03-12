@@ -9,6 +9,8 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  LineChart,
+  Line,
 } from "recharts";
 
 type ProdutoEstoqueBaixo = {
@@ -34,6 +36,23 @@ type GraficoMovimentacao = {
   saida: number;
 };
 
+type ProdutoMovimentado = {
+  productId: string;
+  nome: string;
+  total: number;
+};
+
+type ProdutoParado = {
+  id: string;
+  nome: string;
+  estoqueAtual: number;
+};
+
+type ConsumoMensal = {
+  mes: string;
+  totalSaidas: number;
+};
+
 type DashboardData = {
   totalProdutos: number;
   totalItensEstoque: number;
@@ -46,6 +65,9 @@ type DashboardData = {
   produtosEstoqueBaixo: ProdutoEstoqueBaixo[];
   ultimasMovimentacoes: Movimentacao[];
   graficoMovimentacoes: GraficoMovimentacao[];
+  produtosMaisMovimentados: ProdutoMovimentado[];
+  produtosParados: ProdutoParado[];
+  consumoMensal: ConsumoMensal[];
 };
 
 export default function DashboardPage() {
@@ -147,23 +169,23 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <CardResumo
           titulo="Produtos cadastrados"
-          valor={dados.totalProdutos.toString()}
+          valor={String(dados.totalProdutos)}
           descricao="Base total de produtos"
         />
         <CardResumo
           titulo="Itens em estoque"
-          valor={dados.totalItensEstoque.toString()}
+          valor={String(dados.totalItensEstoque)}
           descricao="Quantidade disponível"
         />
         <CardResumo
           titulo="Estoque baixo"
-          valor={dados.totalEstoqueBaixo.toString()}
+          valor={String(dados.totalEstoqueBaixo)}
           descricao="Produtos que exigem atenção"
           destaque="alerta"
         />
         <CardResumo
           titulo="Solicitações pendentes"
-          valor={dados.solicitacoesPendentes.toString()}
+          valor={String(dados.solicitacoesPendentes)}
           descricao="Aguardando aprovação"
           destaque="aviso"
         />
@@ -177,45 +199,101 @@ export default function DashboardPage() {
             currency: "BRL",
           })}
         />
-        <MiniCard
-          titulo="Total de entradas"
-          valor={dados.totalEntradas.toString()}
-        />
-        <MiniCard
-          titulo="Total de saídas"
-          valor={dados.totalSaidas.toString()}
-        />
+        <MiniCard titulo="Total de entradas" valor={String(dados.totalEntradas)} />
+        <MiniCard titulo="Total de saídas" valor={String(dados.totalSaidas)} />
         <MiniCard
           titulo="Saldo das movimentações"
-          valor={dados.saldoMovimentacoes.toString()}
+          valor={String(dados.saldoMovimentacoes)}
         />
       </div>
 
-      <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-zinc-900">
-            Entradas x Saídas
-          </h2>
-          <p className="mt-1 text-sm text-zinc-500">
-            Comparativo recente das movimentações do estoque
-          </p>
-        </div>
-
-        <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={dados.graficoMovimentacoes}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="data" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="entrada" name="Entradas" radius={[8, 8, 0, 0]} />
-              <Bar dataKey="saida" name="Saídas" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
-
       <div className="grid gap-6 xl:grid-cols-2">
+        <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-zinc-900">
+              Entradas x Saídas
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500">
+              Comparativo mensal das movimentações
+            </p>
+          </div>
+
+          <div className="h-80 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={dados.graficoMovimentacoes}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="data" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="entrada" name="Entradas" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="saida" name="Saídas" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-zinc-900">
+              Consumo mensal
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500">
+              Saídas consolidadas por período
+            </p>
+          </div>
+
+          <div className="h-80 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={dados.consumoMensal}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="mes" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="totalSaidas"
+                  name="Saídas"
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-zinc-900">
+              Produtos mais movimentados
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500">
+              Ranking operacional do estoque
+            </p>
+          </div>
+
+          {dados.produtosMaisMovimentados.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 px-6 py-10 text-center text-sm text-zinc-500">
+              Nenhum dado disponível.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {dados.produtosMaisMovimentados.map((item) => (
+                <div
+                  key={item.productId}
+                  className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4"
+                >
+                  <p className="font-medium text-zinc-900">{item.nome}</p>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    Total movimentado:{" "}
+                    <strong className="text-zinc-900">{item.total}</strong>
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
@@ -240,82 +318,22 @@ export default function DashboardPage() {
               Nenhum produto com estoque baixo.
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-2xl border border-zinc-200">
-              <table className="min-w-full bg-white text-sm">
-                <thead className="bg-zinc-50">
-                  <tr className="text-left">
-                    <th className="px-4 py-3 font-semibold text-zinc-700">
-                      Produto
-                    </th>
-                    <th className="px-4 py-3 font-semibold text-zinc-700">
-                      Estoque atual
-                    </th>
-                    <th className="px-4 py-3 font-semibold text-zinc-700">
-                      Estoque mínimo
-                    </th>
-                    <th className="px-4 py-3 font-semibold text-zinc-700">
-                      Nível
-                    </th>
-                    <th className="px-4 py-3 font-semibold text-zinc-700">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...dados.produtosEstoqueBaixo]
-                    .sort((a, b) => a.estoqueAtual - b.estoqueAtual)
-                    .map((produto) => {
-                      const percentual =
-                        produto.estoqueMinimo > 0
-                          ? (produto.estoqueAtual / produto.estoqueMinimo) * 100
-                          : 0;
-
-                      return (
-                        <tr key={produto.id} className="border-t border-zinc-100">
-                          <td className="px-4 py-4 font-medium text-zinc-900">
-                            {produto.nome}
-                          </td>
-                          <td className="px-4 py-4">
-                            <span className="font-semibold text-red-600">
-                              {produto.estoqueAtual}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 text-zinc-600">
-                            {produto.estoqueMinimo}
-                          </td>
-                          <td className="px-4 py-4 w-40">
-                            <div className="h-2 w-full rounded bg-zinc-200">
-                              <div
-                                className={`h-2 rounded ${
-                                  percentual <= 50
-                                    ? "bg-red-500"
-                                    : "bg-yellow-500"
-                                }`}
-                                style={{
-                                  width: `${Math.max(
-                                    8,
-                                    Math.min(percentual, 100)
-                                  )}%`,
-                                }}
-                              />
-                            </div>
-                          </td>
-                          <td className="px-4 py-4">
-                            <span
-                              className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                                percentual <= 50
-                                  ? "bg-red-100 text-red-700"
-                                  : "bg-yellow-100 text-yellow-700"
-                              }`}
-                            >
-                              {percentual <= 50 ? "Crítico" : "Atenção"}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
+            <div className="space-y-3">
+              {dados.produtosEstoqueBaixo.map((produto) => (
+                <div
+                  key={produto.id}
+                  className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4"
+                >
+                  <p className="font-medium text-zinc-900">{produto.nome}</p>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    Estoque atual:{" "}
+                    <strong className="text-red-600">{produto.estoqueAtual}</strong>
+                  </p>
+                  <p className="text-sm text-zinc-500">
+                    Estoque mínimo: {produto.estoqueMinimo}
+                  </p>
+                </div>
+              ))}
             </div>
           )}
         </section>
@@ -323,48 +341,28 @@ export default function DashboardPage() {
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="mb-4">
             <h2 className="text-xl font-semibold text-zinc-900">
-              Últimas movimentações
+              Produtos parados
             </h2>
             <p className="mt-1 text-sm text-zinc-500">
-              Histórico recente do sistema
+              Sem movimentações registradas
             </p>
           </div>
 
-          {dados.ultimasMovimentacoes.length === 0 ? (
+          {dados.produtosParados.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 px-6 py-10 text-center text-sm text-zinc-500">
-              Nenhuma movimentação registrada.
+              Nenhum produto parado.
             </div>
           ) : (
             <div className="space-y-3">
-              {dados.ultimasMovimentacoes.map((mov) => (
+              {dados.produtosParados.map((produto) => (
                 <div
-                  key={mov.id}
+                  key={produto.id}
                   className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4"
                 >
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="font-medium text-zinc-900">
-                        {mov.product.nome}
-                      </p>
-                      <p className="text-sm text-zinc-500">
-                        {new Date(mov.createdAt).toLocaleString("pt-BR")}
-                      </p>
-                    </div>
-
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        mov.tipo === "entrada"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {mov.tipo}
-                    </span>
-                  </div>
-
-                  <p className="mt-3 text-sm text-zinc-600">
-                    Quantidade movimentada:{" "}
-                    <strong className="text-zinc-900">{mov.quantidade}</strong>
+                  <p className="font-medium text-zinc-900">{produto.nome}</p>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    Estoque atual:{" "}
+                    <strong className="text-zinc-900">{produto.estoqueAtual}</strong>
                   </p>
                 </div>
               ))}
@@ -372,6 +370,58 @@ export default function DashboardPage() {
           )}
         </section>
       </div>
+
+      <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-zinc-900">
+            Últimas movimentações
+          </h2>
+          <p className="mt-1 text-sm text-zinc-500">
+            Histórico recente do sistema
+          </p>
+        </div>
+
+        {dados.ultimasMovimentacoes.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50 px-6 py-10 text-center text-sm text-zinc-500">
+            Nenhuma movimentação registrada.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {dados.ultimasMovimentacoes.map((mov) => (
+              <div
+                key={mov.id}
+                className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="font-medium text-zinc-900">
+                      {mov.product.nome}
+                    </p>
+                    <p className="text-sm text-zinc-500">
+                      {new Date(mov.createdAt).toLocaleString("pt-BR")}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      mov.tipo === "entrada"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {mov.tipo}
+                  </span>
+                </div>
+
+                <p className="mt-3 text-sm text-zinc-600">
+                  Quantidade movimentada:{" "}
+                  <strong className="text-zinc-900">{mov.quantidade}</strong>
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

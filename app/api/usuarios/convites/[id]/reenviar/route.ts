@@ -2,6 +2,9 @@ import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { registrarAuditoria } from "@/lib/audit";
+
+export const dynamic = "force-dynamic";
 
 type Params = {
   params: Promise<{
@@ -33,6 +36,7 @@ export async function PATCH(_req: Request, { params }: Params) {
       },
       select: {
         id: true,
+        email: true,
         status: true,
       },
     });
@@ -55,7 +59,7 @@ export async function PATCH(_req: Request, { params }: Params) {
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
 
     const atualizado = await prisma.userInvite.update({
-      where: { id },
+      where: { id: convite.id },
       data: {
         token,
         status: "pendente",
@@ -71,6 +75,15 @@ export async function PATCH(_req: Request, { params }: Params) {
         expiresAt: true,
         createdAt: true,
       },
+    });
+
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "editar",
+      entidade: "convite",
+      entidadeId: atualizado.id,
+      descricao: `Convite reenviado para ${atualizado.email}`,
     });
 
     return NextResponse.json(atualizado);

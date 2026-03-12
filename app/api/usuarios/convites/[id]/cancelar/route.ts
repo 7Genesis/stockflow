@@ -1,6 +1,9 @@
 import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+import { registrarAuditoria } from "@/lib/audit";
+
+export const dynamic = "force-dynamic";
 
 type Context = {
   params: Promise<{
@@ -25,13 +28,6 @@ export async function PATCH(_req: Request, context: Context) {
 
     const { id } = await context.params;
 
-    if (!id) {
-      return NextResponse.json(
-        { error: "ID do convite não informado" },
-        { status: 400 }
-      );
-    }
-
     const convite = await prisma.userInvite.findFirst({
       where: {
         id,
@@ -39,6 +35,7 @@ export async function PATCH(_req: Request, context: Context) {
       },
       select: {
         id: true,
+        email: true,
         status: true,
       },
     });
@@ -74,6 +71,15 @@ export async function PATCH(_req: Request, context: Context) {
         expiresAt: true,
         createdAt: true,
       },
+    });
+
+    await registrarAuditoria({
+      empresaId: usuario.empresaId,
+      userId: usuario.id,
+      acao: "cancelar",
+      entidade: "convite",
+      entidadeId: atualizado.id,
+      descricao: `Convite cancelado para ${atualizado.email}`,
     });
 
     return NextResponse.json(atualizado);

@@ -220,6 +220,17 @@ exports.Prisma.UserInviteScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  empresaId: 'empresaId',
+  userId: 'userId',
+  acao: 'acao',
+  entidade: 'entidade',
+  entidadeId: 'entidadeId',
+  descricao: 'descricao',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -245,7 +256,8 @@ exports.Prisma.ModelName = {
   Fornecedor: 'Fornecedor',
   NfeImport: 'NfeImport',
   NfeImportItem: 'NfeImportItem',
-  UserInvite: 'UserInvite'
+  UserInvite: 'UserInvite',
+  AuditLog: 'AuditLog'
 };
 
 /**
