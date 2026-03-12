@@ -106,6 +106,28 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {dados.totalEstoqueBaixo > 0 && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-red-700">
+                ⚠ Atenção: produtos com estoque baixo
+              </p>
+              <p className="text-sm text-red-600">
+                {dados.totalEstoqueBaixo} produto(s) precisam de reposição.
+              </p>
+            </div>
+
+            <a
+              href="/produtos"
+              className="rounded-xl bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"
+            >
+              Ver produtos críticos
+            </a>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-zinc-900">Dashboard</h1>
@@ -232,42 +254,66 @@ export default function DashboardPage() {
                       Estoque mínimo
                     </th>
                     <th className="px-4 py-3 font-semibold text-zinc-700">
+                      Nível
+                    </th>
+                    <th className="px-4 py-3 font-semibold text-zinc-700">
                       Status
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {dados.produtosEstoqueBaixo.map((produto) => {
-                    const percentual =
-                      produto.estoqueMinimo > 0
-                        ? (produto.estoqueAtual / produto.estoqueMinimo) * 100
-                        : 0;
+                  {[...dados.produtosEstoqueBaixo]
+                    .sort((a, b) => a.estoqueAtual - b.estoqueAtual)
+                    .map((produto) => {
+                      const percentual =
+                        produto.estoqueMinimo > 0
+                          ? (produto.estoqueAtual / produto.estoqueMinimo) * 100
+                          : 0;
 
-                    return (
-                      <tr key={produto.id} className="border-t border-zinc-100">
-                        <td className="px-4 py-4 font-medium text-zinc-900">
-                          {produto.nome}
-                        </td>
-                        <td className="px-4 py-4 text-red-600">
-                          {produto.estoqueAtual}
-                        </td>
-                        <td className="px-4 py-4 text-zinc-600">
-                          {produto.estoqueMinimo}
-                        </td>
-                        <td className="px-4 py-4">
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                              percentual <= 50
-                                ? "bg-red-100 text-red-700"
-                                : "bg-yellow-100 text-yellow-700"
-                            }`}
-                          >
-                            {percentual <= 50 ? "Crítico" : "Atenção"}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                      return (
+                        <tr key={produto.id} className="border-t border-zinc-100">
+                          <td className="px-4 py-4 font-medium text-zinc-900">
+                            {produto.nome}
+                          </td>
+                          <td className="px-4 py-4">
+                            <span className="font-semibold text-red-600">
+                              {produto.estoqueAtual}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 text-zinc-600">
+                            {produto.estoqueMinimo}
+                          </td>
+                          <td className="px-4 py-4 w-40">
+                            <div className="h-2 w-full rounded bg-zinc-200">
+                              <div
+                                className={`h-2 rounded ${
+                                  percentual <= 50
+                                    ? "bg-red-500"
+                                    : "bg-yellow-500"
+                                }`}
+                                style={{
+                                  width: `${Math.max(
+                                    8,
+                                    Math.min(percentual, 100)
+                                  )}%`,
+                                }}
+                              />
+                            </div>
+                          </td>
+                          <td className="px-4 py-4">
+                            <span
+                              className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                                percentual <= 50
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-yellow-100 text-yellow-700"
+                              }`}
+                            >
+                              {percentual <= 50 ? "Crítico" : "Atenção"}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>

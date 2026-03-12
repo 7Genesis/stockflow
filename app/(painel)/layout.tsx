@@ -11,6 +11,24 @@ type SessionUser = {
   empresaId: string;
 };
 
+type Empresa = {
+  id: string;
+  nome: string;
+  cnpj: string | null;
+};
+
+type AlertaEstoque = {
+  id: string;
+  nome: string;
+  estoqueAtual: number;
+  estoqueMinimo: number;
+};
+
+type AlertasResponse = {
+  total: number;
+  produtos: AlertaEstoque[];
+};
+
 function getSessionUser(): SessionUser | null {
   if (typeof document === "undefined") return null;
 
@@ -45,6 +63,10 @@ export default function PainelLayout({
   const pathname = usePathname();
 
   const [usuario, setUsuario] = useState<SessionUser | null>(null);
+  const [empresa, setEmpresa] = useState<Empresa | null>(null);
+  const [alertasEstoque, setAlertasEstoque] = useState<AlertasResponse | null>(
+    null
+  );
   const [carregandoSessao, setCarregandoSessao] = useState(true);
 
   useEffect(() => {
@@ -60,6 +82,56 @@ export default function PainelLayout({
     setUsuario(session);
     setCarregandoSessao(false);
   }, [router]);
+
+  useEffect(() => {
+    async function carregarEmpresa() {
+      if (!usuario) return;
+
+      try {
+        const response = await fetch("/api/empresa", {
+          cache: "no-store",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error("Erro ao carregar empresa:", data);
+          return;
+        }
+
+        setEmpresa(data);
+      } catch (error) {
+        console.error("Erro ao carregar empresa:", error);
+      }
+    }
+
+    carregarEmpresa();
+  }, [usuario]);
+
+  useEffect(() => {
+    async function carregarAlertas() {
+      if (!usuario) return;
+
+      try {
+        const response = await fetch("/api/alertas/estoque", {
+          cache: "no-store",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error("Erro ao carregar alertas:", data);
+          return;
+        }
+
+        setAlertasEstoque(data);
+      } catch (error) {
+        console.error("Erro ao carregar alertas:", error);
+      }
+    }
+
+    carregarAlertas();
+  }, [usuario]);
 
   async function sair() {
     try {
@@ -84,9 +156,11 @@ export default function PainelLayout({
       { href: "/scanner", label: "Scanner" },
       { href: "/nfe", label: "Importar NF-e" },
       { href: "/fornecedores", label: "Fornecedores" },
+      { href: "/empresa", label: "Empresa" },
       { href: "/relatorios/fornecedores", label: "Relatório Fornecedores" },
       { href: "/solicitacoes", label: "Solicitações" },
       { href: "/usuarios", label: "Usuários" },
+      { href: "/usuarios/convites", label: "Convites" },
     ],
     []
   );
@@ -129,7 +203,7 @@ export default function PainelLayout({
                     StockFlow
                   </h1>
                   <p className="mt-1 text-sm text-zinc-500">
-                    Gestão inteligente de estoque
+                    {empresa?.nome || "Gestão inteligente de estoque"}
                   </p>
                 </div>
               </div>
@@ -148,10 +222,17 @@ export default function PainelLayout({
                   <span className="inline-flex rounded-full bg-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-700">
                     {usuario.role}
                   </span>
+
                   <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-                    Empresa {usuario.empresaId.slice(0, 8)}
+                    {empresa?.nome || `Empresa ${usuario.empresaId.slice(0, 8)}`}
                   </span>
                 </div>
+
+                {empresa?.cnpj && (
+                  <p className="mt-3 text-xs text-zinc-500">
+                    CNPJ: {empresa.cnpj}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -221,7 +302,7 @@ export default function PainelLayout({
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-sm font-medium text-zinc-900">
-                  Painel operacional
+                  {empresa ? `StockFlow — ${empresa.nome}` : "Painel operacional"}
                 </p>
                 <p className="text-sm text-zinc-500">
                   Controle de estoque, usuários, fornecedores e NF-e
@@ -229,10 +310,46 @@ export default function PainelLayout({
               </div>
 
               <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm text-zinc-600">
-                Ambiente ativo
+                {empresa?.cnpj ? `CNPJ ${empresa.cnpj}` : "Ambiente ativo"}
               </div>
             </div>
           </header>
+
+          {alertasEstoque && alertasEstoque.total > 0 && (
+            <div className="border-b border-red-200 bg-red-50 px-6 py-4 md:px-8">
+              <div className="mx-auto flex max-w-7xl flex-col gap-3">
+                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-red-700">
+                      ⚠ Alerta de estoque baixo
+                    </p>
+                    <p className="text-sm text-red-600">
+                      {alertasEstoque.total} produto(s) precisam de atenção.
+                    </p>
+                  </div>
+
+                  <a
+                    href="/produtos"
+                    className="rounded-xl bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"
+                  >
+                    Ver produtos
+                  </a>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {alertasEstoque.produtos.map((produto) => (
+                    <span
+                      key={produto.id}
+                      className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700"
+                    >
+                      {produto.nome} • {produto.estoqueAtual}/
+                      {produto.estoqueMinimo}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           <main className="flex-1 p-6 md:p-8">
             <div className="mx-auto w-full max-w-7xl">{children}</div>

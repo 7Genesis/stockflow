@@ -208,6 +208,18 @@ exports.Prisma.NfeImportItemScalarFieldEnum = {
   unidade: 'unidade'
 };
 
+exports.Prisma.UserInviteScalarFieldEnum = {
+  id: 'id',
+  empresaId: 'empresaId',
+  nome: 'nome',
+  email: 'email',
+  role: 'role',
+  token: 'token',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -232,7 +244,8 @@ exports.Prisma.ModelName = {
   Solicitacao: 'Solicitacao',
   Fornecedor: 'Fornecedor',
   NfeImport: 'NfeImport',
-  NfeImportItem: 'NfeImportItem'
+  NfeImportItem: 'NfeImportItem',
+  UserInvite: 'UserInvite'
 };
 
 /**

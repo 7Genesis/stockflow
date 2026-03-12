@@ -13,6 +13,7 @@ model Empresa {
   cnpj      String?  @unique
   createdAt DateTime @default(now())
 
+  convites UserInvite[]
   usuarios      User[]
   produtos      Product[]
   movimentacoes StockMovement[]
@@ -157,4 +158,21 @@ model NfeImportItem {
   @@index([nfeImportId])
   @@index([productId])
   @@index([descricao])
+}
+model UserInvite {
+  id         String   @id @default(cuid())
+  empresaId  String
+  nome       String
+  email      String
+  role       String   @default("user")
+  token      String   @unique
+  status     String   @default("pendente")
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  @@index([empresaId])
+  @@index([email])
+  @@index([token])
 }
