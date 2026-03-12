@@ -19,6 +19,7 @@ export async function GET() {
 
     const solicitacoes = await prisma.solicitacao.findMany({
       where: {
+        empresaId: usuario.empresaId,
       },
       include: {
         user: {
@@ -66,9 +67,16 @@ export async function POST(req: Request) {
     const productId = String(body.productId ?? "").trim();
     const quantidade = Number(body.quantidade ?? 0);
 
-    if (!productId || !quantidade) {
+    if (!productId) {
       return NextResponse.json(
-        { error: "Produto e quantidade são obrigatórios" },
+        { error: "Produto é obrigatório" },
+        { status: 400 }
+      );
+    }
+
+    if (!quantidade || Number.isNaN(quantidade) || quantidade <= 0) {
+      return NextResponse.json(
+        { error: "Quantidade inválida" },
         { status: 400 }
       );
     }
@@ -76,9 +84,11 @@ export async function POST(req: Request) {
     const produto = await prisma.product.findFirst({
       where: {
         id: productId,
+        empresaId: usuario.empresaId,
       },
       select: {
         id: true,
+        nome: true,
       },
     });
 
@@ -91,16 +101,38 @@ export async function POST(req: Request) {
 
     const solicitacao = await prisma.solicitacao.create({
       data: {
-        userId: usuario.id,
-        productId,
         quantidade,
         status: "pendente",
+        empresa: {
+          connect: {
+            id: usuario.empresaId,
+          },
+        },
+        user: {
+          connect: {
+            id: usuario.id,
+          },
+        },
+        product: {
+          connect: {
+            id: productId,
+          },
+        },
       },
       include: {
+        user: {
+          select: {
+            id: true,
+            nome: true,
+            email: true,
+          },
+        },
         product: {
           select: {
             id: true,
             nome: true,
+            sku: true,
+            codigoBarras: true,
           },
         },
       },

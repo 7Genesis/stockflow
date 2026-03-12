@@ -1,15 +1,36 @@
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const usuario = await getSessionUser();
+
+    if (!usuario) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
+    if (usuario.role !== "admin") {
+      return NextResponse.json(
+        { error: "Apenas administradores podem recusar solicitações" },
+        { status: 403 }
+      );
+    }
+
     const { id } = await params;
 
-    const solicitacao = await prisma.solicitacao.findUnique({
-      where: { id },
+    const solicitacao = await prisma.solicitacao.findFirst({
+      where: {
+        id,
+        empresaId: usuario.empresaId,
+      },
+      select: {
+        id: true,
+        status: true,
+      },
     });
 
     if (!solicitacao) {
@@ -27,7 +48,7 @@ export async function PATCH(
     }
 
     await prisma.solicitacao.update({
-      where: { id },
+      where: { id: solicitacao.id },
       data: {
         status: "recusada",
       },

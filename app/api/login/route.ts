@@ -16,44 +16,63 @@ export async function POST(req: Request) {
     const email = String(body.email).trim().toLowerCase();
     const senha = String(body.senha).trim();
 
-    const usuario = await prisma.user.findUnique({
+    const usuarios = await prisma.user.findMany({
       where: { email },
+      orderBy: {
+        createdAt: "asc",
+      },
     });
 
-    if (!usuario) {
+    if (usuarios.length === 0) {
       return NextResponse.json(
         { error: "Usuário não encontrado" },
         { status: 404 }
       );
     }
 
-    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    let usuarioValido: (typeof usuarios)[number] | null = null;
 
-    if (!senhaValida) {
-      return NextResponse.json({ error: "Senha inválida" }, { status: 401 });
+    for (const usuario of usuarios) {
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+      if (senhaValida) {
+        usuarioValido = usuario;
+        break;
+      }
+    }
+
+    if (!usuarioValido) {
+      return NextResponse.json(
+        { error: "Senha inválida" },
+        { status: 401 }
+      );
     }
 
     const sessionUser = {
-      id: usuario.id,
-      nome: usuario.nome,
-      email: usuario.email,
-      role: usuario.role as "admin" | "user",
+      id: usuarioValido.id,
+      nome: usuarioValido.nome,
+      email: usuarioValido.email,
+      role: usuarioValido.role as "admin" | "user",
+      empresaId: usuarioValido.empresaId,
     };
+
+    const sessionValue = Buffer.from(
+      JSON.stringify(sessionUser),
+      "utf-8"
+    ).toString("base64");
 
     const response = NextResponse.json({
       success: true,
       usuario: sessionUser,
     });
 
-    response.cookies.set(
-      "session",
-      Buffer.from(JSON.stringify(sessionUser)).toString("base64"),
-      {
-        httpOnly: false,
-        path: "/",
-        maxAge: 60 * 60 * 24,
-      }
-    );
+    response.cookies.set("session", sessionValue, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
 
     return response;
   } catch (error) {

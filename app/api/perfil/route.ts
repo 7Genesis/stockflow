@@ -1,29 +1,13 @@
 import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { getSessionUser } from "@/lib/session";
+import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
-type SessionUser = {
-  id: string;
-  nome: string;
-  email: string;
-  role: "admin" | "user";
-};
+export const dynamic = "force-dynamic";
 
-function getSession(request: NextRequest): SessionUser | null {
-  const cookie = request.cookies.get("session")?.value;
-
-  if (!cookie) return null;
-
+export async function GET() {
   try {
-    return JSON.parse(cookie) as SessionUser;
-  } catch {
-    return null;
-  }
-}
-
-export async function GET(request: NextRequest) {
-  try {
-    const session = getSession(request);
+    const session = await getSessionUser();
 
     if (!session) {
       return NextResponse.json(
@@ -32,8 +16,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const usuario = await prisma.user.findUnique({
-      where: { id: session.id },
+    const usuario = await prisma.user.findFirst({
+      where: {
+        id: session.id,
+        empresaId: session.empresaId,
+      },
       select: {
         id: true,
         nome: true,
@@ -61,9 +48,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function PUT(request: NextRequest) {
+export async function PUT(request: Request) {
   try {
-    const session = getSession(request);
+    const session = await getSessionUser();
 
     if (!session) {
       return NextResponse.json(
@@ -86,14 +73,37 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const usuario = await prisma.user.findUnique({
-      where: { id: session.id },
+    const usuario = await prisma.user.findFirst({
+      where: {
+        id: session.id,
+        empresaId: session.empresaId,
+      },
     });
 
     if (!usuario) {
       return NextResponse.json(
         { error: "Usuário não encontrado" },
         { status: 404 }
+      );
+    }
+
+    const emailEmUso = await prisma.user.findFirst({
+      where: {
+        empresaId: session.empresaId,
+        email,
+        NOT: {
+          id: session.id,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (emailEmUso) {
+      return NextResponse.json(
+        { error: "Já existe outro usuário com esse email nesta empresa" },
+        { status: 400 }
       );
     }
 
@@ -135,25 +145,38 @@ export async function PUT(request: NextRequest) {
         email: true,
         role: true,
         createdAt: true,
+        empresaId: true,
       },
     });
 
-    const response = NextResponse.json(atualizado);
+    const sessionUser = {
+      id: atualizado.id,
+      nome: atualizado.nome,
+      email: atualizado.email,
+      role: atualizado.role as "admin" | "user",
+      empresaId: atualizado.empresaId,
+    };
 
-    response.cookies.set(
-      "session",
-      JSON.stringify({
-        id: atualizado.id,
-        nome: atualizado.nome,
-        email: atualizado.email,
-        role: atualizado.role,
-      }),
-      {
-        httpOnly: false,
-        path: "/",
-        maxAge: 60 * 60 * 24,
-      }
-    );
+    const sessionValue = Buffer.from(
+      JSON.stringify(sessionUser),
+      "utf-8"
+    ).toString("base64");
+
+    const response = NextResponse.json({
+      id: atualizado.id,
+      nome: atualizado.nome,
+      email: atualizado.email,
+      role: atualizado.role,
+      createdAt: atualizado.createdAt,
+    });
+
+    response.cookies.set("session", sessionValue, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
 
     return response;
   } catch (error) {

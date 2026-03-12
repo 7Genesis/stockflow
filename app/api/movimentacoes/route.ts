@@ -4,6 +4,13 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+type MovimentacaoBody = {
+  productId?: string;
+  tipo?: string;
+  quantidade?: number | string;
+  observacao?: string;
+};
+
 export async function GET() {
   try {
     const usuario = await getSessionUser();
@@ -14,6 +21,7 @@ export async function GET() {
 
     const movimentacoes = await prisma.stockMovement.findMany({
       where: {
+        empresaId: usuario.empresaId,
       },
       include: {
         product: {
@@ -47,21 +55,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
-    const body = (await req.json()) as {
-      productId?: string;
-      tipo?: string;
-      quantidade?: number | string;
-      observacao?: string;
-    };
+    const body = (await req.json()) as MovimentacaoBody;
 
     const productId = String(body.productId ?? "").trim();
     const tipo = String(body.tipo ?? "").trim().toLowerCase();
     const quantidade = Number(body.quantidade ?? 0);
     const observacao = String(body.observacao ?? "").trim() || null;
 
-    if (!productId || !tipo || !quantidade) {
+    if (!productId || !tipo) {
       return NextResponse.json(
-        { error: "Produto, tipo e quantidade são obrigatórios" },
+        { error: "Produto e tipo são obrigatórios" },
         { status: 400 }
       );
     }
@@ -70,9 +73,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Tipo inválido" }, { status: 400 });
     }
 
+    if (!quantidade || Number.isNaN(quantidade) || quantidade <= 0) {
+      return NextResponse.json(
+        { error: "Quantidade inválida" },
+        { status: 400 }
+      );
+    }
+
     const produto = await prisma.product.findFirst({
       where: {
         id: productId,
+        empresaId: usuario.empresaId,
+      },
+      select: {
+        id: true,
+        nome: true,
+        estoqueAtual: true,
       },
     });
 
@@ -93,6 +109,7 @@ export async function POST(req: Request) {
     await prisma.$transaction(async (tx) => {
       await tx.stockMovement.create({
         data: {
+          empresaId: usuario.empresaId,
           productId,
           tipo,
           quantidade,

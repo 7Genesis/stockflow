@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -48,12 +49,15 @@ function gerarCodigoBarrasAutomatico() {
   return `${timestamp}${aleatorio}`.slice(0, 13);
 }
 
-async function gerarSkuUnico(nome: string) {
+async function gerarSkuUnico(nome: string, empresaId: string) {
   for (let tentativa = 0; tentativa < 10; tentativa++) {
     const sku = gerarSkuAutomatico(nome);
 
-    const existente = await prisma.product.findUnique({
-      where: { sku },
+    const existente = await prisma.product.findFirst({
+      where: {
+        empresaId,
+        sku,
+      },
       select: { id: true },
     });
 
@@ -65,12 +69,15 @@ async function gerarSkuUnico(nome: string) {
   throw new Error("Não foi possível gerar um SKU único");
 }
 
-async function gerarCodigoBarrasUnico() {
+async function gerarCodigoBarrasUnico(empresaId: string) {
   for (let tentativa = 0; tentativa < 10; tentativa++) {
     const codigoBarras = gerarCodigoBarrasAutomatico();
 
-    const existente = await prisma.product.findUnique({
-      where: { codigoBarras },
+    const existente = await prisma.product.findFirst({
+      where: {
+        empresaId,
+        codigoBarras,
+      },
       select: { id: true },
     });
 
@@ -84,8 +91,19 @@ async function gerarCodigoBarrasUnico() {
 
 export async function GET() {
   try {
+    const usuario = await getSessionUser();
+
+    if (!usuario) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
     const produtos = await prisma.product.findMany({
-      orderBy: { createdAt: "desc" },
+      where: {
+        empresaId: usuario.empresaId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return NextResponse.json(produtos);
@@ -101,6 +119,12 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const usuario = await getSessionUser();
+
+    if (!usuario) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
     const body = (await req.json()) as ProdutoBody;
 
     const nome = String(body.nome ?? "").trim();
@@ -119,8 +143,11 @@ export async function POST(req: Request) {
       : "";
 
     if (sku) {
-      const skuExistente = await prisma.product.findUnique({
-        where: { sku },
+      const skuExistente = await prisma.product.findFirst({
+        where: {
+          empresaId: usuario.empresaId,
+          sku,
+        },
         select: { id: true },
       });
 
@@ -131,12 +158,15 @@ export async function POST(req: Request) {
         );
       }
     } else {
-      sku = await gerarSkuUnico(nome);
+      sku = await gerarSkuUnico(nome, usuario.empresaId);
     }
 
     if (codigoBarras) {
-      const codigoExistente = await prisma.product.findUnique({
-        where: { codigoBarras },
+      const codigoExistente = await prisma.product.findFirst({
+        where: {
+          empresaId: usuario.empresaId,
+          codigoBarras,
+        },
         select: { id: true },
       });
 
@@ -147,11 +177,12 @@ export async function POST(req: Request) {
         );
       }
     } else {
-      codigoBarras = await gerarCodigoBarrasUnico();
+      codigoBarras = await gerarCodigoBarrasUnico(usuario.empresaId);
     }
 
     const produto = await prisma.product.create({
       data: {
+        empresaId: usuario.empresaId,
         nome,
         sku,
         codigoBarras,

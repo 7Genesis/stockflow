@@ -1,13 +1,29 @@
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
+
+type ProdutoBody = {
+  nome?: string;
+  categoria?: string | null;
+  sku?: string | null;
+  codigoBarras?: string | null;
+  preco?: string | number | null;
+  estoqueMinimo?: string | number | null;
+};
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const usuario = await getSessionUser();
+
+    if (!usuario) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
     const { id } = await params;
-    const body = await request.json();
+    const body = (await request.json()) as ProdutoBody;
 
     const nome = String(body.nome ?? "").trim();
 
@@ -15,6 +31,23 @@ export async function PUT(
       return NextResponse.json(
         { error: "Nome do produto é obrigatório" },
         { status: 400 }
+      );
+    }
+
+    const produtoExistente = await prisma.product.findFirst({
+      where: {
+        id,
+        empresaId: usuario.empresaId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!produtoExistente) {
+      return NextResponse.json(
+        { error: "Produto não encontrado" },
+        { status: 404 }
       );
     }
 
@@ -26,6 +59,7 @@ export async function PUT(
     if (sku) {
       const skuExistente = await prisma.product.findFirst({
         where: {
+          empresaId: usuario.empresaId,
           sku,
           NOT: { id },
         },
@@ -43,6 +77,7 @@ export async function PUT(
     if (codigoBarras) {
       const codigoExistente = await prisma.product.findFirst({
         where: {
+          empresaId: usuario.empresaId,
           codigoBarras,
           NOT: { id },
         },
@@ -62,6 +97,8 @@ export async function PUT(
       data: {
         nome,
         categoria: String(body.categoria ?? "").trim() || null,
+        sku,
+        codigoBarras,
         preco:
           body.preco !== null &&
           body.preco !== undefined &&
@@ -74,7 +111,6 @@ export async function PUT(
           String(body.estoqueMinimo).trim() !== ""
             ? Number(body.estoqueMinimo)
             : 0,
-        codigoBarras,
       },
     });
 
@@ -90,23 +126,60 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const usuario = await getSessionUser();
+
+    if (!usuario) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
     const { id } = await params;
+
+    const produtoExistente = await prisma.product.findFirst({
+      where: {
+        id,
+        empresaId: usuario.empresaId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!produtoExistente) {
+      return NextResponse.json(
+        { error: "Produto não encontrado" },
+        { status: 404 }
+      );
+    }
 
     await prisma.$transaction(async (tx) => {
       await tx.stockMovement.deleteMany({
-        where: { productId: id },
+        where: {
+          empresaId: usuario.empresaId,
+          productId: id,
+        },
       });
 
       await tx.solicitacao.deleteMany({
-        where: { productId: id },
+        where: {
+          empresaId: usuario.empresaId,
+          productId: id,
+        },
+      });
+
+      await tx.nfeImportItem.deleteMany({
+        where: {
+          productId: id,
+        },
       });
 
       await tx.product.delete({
-        where: { id },
+        where: {
+          id,
+        },
       });
     });
 

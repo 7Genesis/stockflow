@@ -1,36 +1,70 @@
-import "dotenv/config";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL!,
-});
-
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 async function main() {
-  const senhaHash = await bcrypt.hash("123456", 10);
+  const senhaAdminHash = await bcrypt.hash("123456", 10);
+  const senhaUserHash = await bcrypt.hash("123456", 10);
 
-  await prisma.user.upsert({
+  const empresa = await prisma.empresa.upsert({
     where: {
-      email: "admin@stockflow.com",
+      cnpj: "00000000000191",
     },
     update: {},
     create: {
-      nome: "Administrador",
-      email: "admin@stockflow.com",
-      senha: senhaHash,
-      role: "admin",
+      nome: "Empresa Demo",
+      cnpj: "00000000000191",
     },
   });
 
+  const adminExistente = await prisma.user.findFirst({
+    where: {
+      empresaId: empresa.id,
+      email: "admin@stockflow.com",
+    },
+  });
+
+  if (!adminExistente) {
+    await prisma.user.create({
+      data: {
+        empresaId: empresa.id,
+        nome: "Administrador",
+        email: "admin@stockflow.com",
+        senha: senhaAdminHash,
+        role: "admin",
+      },
+    });
+  }
+
+  const userExistente = await prisma.user.findFirst({
+    where: {
+      empresaId: empresa.id,
+      email: "user@stockflow.com",
+    },
+  });
+
+  if (!userExistente) {
+    await prisma.user.create({
+      data: {
+        empresaId: empresa.id,
+        nome: "Usuário Teste",
+        email: "user@stockflow.com",
+        senha: senhaUserHash,
+        role: "user",
+      },
+    });
+  }
+
   console.log("Seed executado com sucesso.");
+  console.log("Empresa:", empresa.nome);
+  console.log("Admin: admin@stockflow.com | Senha: 123456");
+  console.log("User: user@stockflow.com | Senha: 123456");
 }
 
 main()
-  .catch((error) => {
-    console.error("Erro no seed:", error);
+  .catch((e) => {
+    console.error("Erro no seed:", e);
     process.exit(1);
   })
   .finally(async () => {

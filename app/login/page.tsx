@@ -8,6 +8,7 @@ type SessionUser = {
   nome: string;
   email: string;
   role: "admin" | "user";
+  empresaId: string;
 };
 
 export default function LoginPage() {
@@ -17,54 +18,51 @@ export default function LoginPage() {
   const [senha, setSenha] = useState("");
   const [carregando, setCarregando] = useState(false);
 
- async function entrar() {
-  if (!email.trim() || !senha.trim()) {
-    alert("Informe email e senha");
-    return;
-  }
-
-  try {
-    setCarregando(true);
-
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, senha }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(data.error || "Erro ao entrar");
+  async function entrar() {
+    if (!email.trim() || !senha.trim()) {
+      alert("Informe email e senha");
       return;
     }
 
-    const sessionValue = btoa(JSON.stringify(data.usuario));
+    try {
+      setCarregando(true);
 
-    document.cookie =
-      "session=" +
-      encodeURIComponent(sessionValue) +
-      "; path=/; max-age=86400; samesite=lax";
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          senha,
+        }),
+      });
 
-    console.log("COOKIE APÓS LOGIN:", document.cookie);
+      const data = (await response.json()) as {
+        error?: string;
+        usuario?: SessionUser;
+      };
 
-    router.push(
-      data.usuario.role === "admin"
-        ? "/dashboard"
-        : "/minhas-solicitacoes"
-    );
-  } catch (error) {
-    console.error(error);
-    alert("Erro no login");
-  } finally {
-    setCarregando(false);
+      if (!response.ok || !data.usuario) {
+        alert(data.error || "Erro ao entrar");
+        return;
+      }
+
+      router.replace(
+        data.usuario.role === "admin"
+          ? "/dashboard"
+          : "/minhas-solicitacoes"
+      );
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      alert("Não foi possível conectar ao servidor");
+    } finally {
+      setCarregando(false);
+    }
   }
-}
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-100">
+    <main className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
       <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
         <h1 className="mb-2 text-3xl font-bold text-zinc-900">StockFlow</h1>
         <p className="mb-6 text-sm text-zinc-500">Entre no sistema</p>
@@ -87,6 +85,11 @@ export default function LoginPage() {
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  entrar();
+                }
+              }}
             />
           </div>
 
@@ -97,6 +100,14 @@ export default function LoginPage() {
             className="w-full rounded-xl bg-zinc-900 px-6 py-3 text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {carregando ? "Entrando..." : "Entrar"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => router.push("/registro")}
+            className="w-full rounded-xl border border-zinc-300 px-6 py-3 text-zinc-700 hover:bg-zinc-50"
+          >
+            Criar empresa
           </button>
         </div>
       </div>

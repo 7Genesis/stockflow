@@ -6,7 +6,7 @@ type Usuario = {
   id: string;
   nome: string;
   email: string;
-  role: string;
+  role: "admin" | "user";
   createdAt: string;
 };
 
@@ -17,20 +17,34 @@ export default function UsuariosPage() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [role, setRole] = useState("user");
+  const [role, setRole] = useState<"admin" | "user">("user");
   const [salvando, setSalvando] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
 
   async function carregarUsuarios() {
     try {
+      setCarregando(true);
+      setErro("");
+
       const response = await fetch("/api/usuarios", {
         cache: "no-store",
       });
 
       const data = await response.json();
-      setUsuarios(data);
+
+      if (!response.ok) {
+        setErro(data.error || "Erro ao carregar usuários");
+        return;
+      }
+
+      setUsuarios(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Erro ao carregar usuários:", error);
+      setErro("Erro ao carregar usuários");
+    } finally {
+      setCarregando(false);
     }
   }
 
@@ -87,14 +101,23 @@ export default function UsuariosPage() {
     }
   }
 
+  function emailValido(valor: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
+  }
+
   async function salvarUsuario() {
     if (!nome.trim() || !email.trim()) {
-      alert("Informe nome e email");
+      alert("Informe nome e email.");
+      return;
+    }
+
+    if (!emailValido(email.trim().toLowerCase())) {
+      alert("Informe um email válido.");
       return;
     }
 
     if (!editandoId && !senha.trim()) {
-      alert("Informe a senha para criar o usuário");
+      alert("Informe a senha para criar o usuário.");
       return;
     }
 
@@ -113,9 +136,9 @@ export default function UsuariosPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nome,
-          email,
-          senha,
+          nome: nome.trim(),
+          email: email.trim().toLowerCase(),
+          senha: senha.trim(),
           role,
         }),
       });
@@ -216,6 +239,7 @@ export default function UsuariosPage() {
           <div>
             <label className="mb-1 block text-sm text-zinc-600">Email</label>
             <input
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
@@ -237,7 +261,7 @@ export default function UsuariosPage() {
             <div className="mt-2 flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => setMostrarSenha(!mostrarSenha)}
+                onClick={() => setMostrarSenha((prev) => !prev)}
                 className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-100"
               >
                 {mostrarSenha ? "Ocultar" : "Ver"}
@@ -254,7 +278,8 @@ export default function UsuariosPage() {
               <button
                 type="button"
                 onClick={copiarSenha}
-                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-100"
+                disabled={!senha}
+                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Copiar
               </button>
@@ -271,7 +296,7 @@ export default function UsuariosPage() {
             <label className="mb-1 block text-sm text-zinc-600">Perfil</label>
             <select
               value={role}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => setRole(e.target.value as "admin" | "user")}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
             >
               <option value="user">Usuário</option>
@@ -298,7 +323,11 @@ export default function UsuariosPage() {
           Lista de usuários
         </h2>
 
-        {usuarios.length === 0 ? (
+        {carregando ? (
+          <p className="text-sm text-zinc-500">Carregando usuários...</p>
+        ) : erro ? (
+          <p className="text-sm text-red-600">{erro}</p>
+        ) : usuarios.length === 0 ? (
           <p className="text-sm text-zinc-500">Nenhum usuário cadastrado.</p>
         ) : (
           <div className="overflow-x-auto">
@@ -323,7 +352,7 @@ export default function UsuariosPage() {
                       </span>
                     </td>
                     <td className="p-3">
-                      {new Date(usuario.createdAt).toLocaleDateString("pt-BR")}
+                      {new Date(usuario.createdAt).toLocaleString("pt-BR")}
                     </td>
                     <td className="p-3 text-center">
                       <div className="flex items-center justify-center gap-3">

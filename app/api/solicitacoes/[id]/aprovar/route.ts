@@ -10,7 +10,7 @@ type Params = {
   }>;
 };
 
-export async function POST(_req: Request, { params }: Params) {
+async function aprovarSolicitacao({ params }: Params) {
   try {
     const usuario = await getSessionUser();
 
@@ -18,14 +18,28 @@ export async function POST(_req: Request, { params }: Params) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
+    if (usuario.role !== "admin") {
+      return NextResponse.json(
+        { error: "Apenas administradores podem aprovar solicitações" },
+        { status: 403 }
+      );
+    }
+
     const { id } = await params;
 
     const solicitacao = await prisma.solicitacao.findFirst({
       where: {
         id,
+        empresaId: usuario.empresaId,
       },
       include: {
-        product: true,
+        product: {
+          select: {
+            id: true,
+            nome: true,
+            estoqueAtual: true,
+          },
+        },
       },
     });
 
@@ -73,10 +87,11 @@ export async function POST(_req: Request, { params }: Params) {
 
       await tx.stockMovement.create({
         data: {
+          empresaId: usuario.empresaId,
           productId: solicitacao.productId,
           tipo: "saida",
           quantidade: solicitacao.quantidade,
-          observacao: "Solicitação aprovada",
+          observacao: `Solicitação aprovada: ${solicitacao.product.nome}`,
         },
       });
     });
@@ -90,4 +105,12 @@ export async function POST(_req: Request, { params }: Params) {
       { status: 500 }
     );
   }
+}
+
+export async function POST(_req: Request, context: Params) {
+  return aprovarSolicitacao(context);
+}
+
+export async function PATCH(_req: Request, context: Params) {
+  return aprovarSolicitacao(context);
 }

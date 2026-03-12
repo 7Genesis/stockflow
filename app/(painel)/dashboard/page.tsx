@@ -39,6 +39,10 @@ type DashboardData = {
   totalItensEstoque: number;
   totalEstoqueBaixo: number;
   solicitacoesPendentes: number;
+  valorTotalEstoque: number;
+  totalEntradas: number;
+  totalSaidas: number;
+  saldoMovimentacoes: number;
   produtosEstoqueBaixo: ProdutoEstoqueBaixo[];
   ultimasMovimentacoes: Movimentacao[];
   graficoMovimentacoes: GraficoMovimentacao[];
@@ -47,10 +51,12 @@ type DashboardData = {
 export default function DashboardPage() {
   const [dados, setDados] = useState<DashboardData | null>(null);
   const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(true);
 
   async function carregarDashboard() {
     try {
       setErro("");
+      setCarregando(true);
 
       const response = await fetch("/api/dashboard", {
         cache: "no-store",
@@ -60,7 +66,6 @@ export default function DashboardPage() {
 
       if (!response.ok) {
         setErro(data.error || "Erro ao carregar dashboard");
-        console.error(data.error || "Erro ao carregar dashboard");
         return;
       }
 
@@ -68,6 +73,8 @@ export default function DashboardPage() {
     } catch (error) {
       console.error("Erro ao carregar dashboard:", error);
       setErro("Erro ao carregar dashboard");
+    } finally {
+      setCarregando(false);
     }
   }
 
@@ -79,6 +86,14 @@ export default function DashboardPage() {
     window.location.href = "/api/produtos/estoque-baixo/exportar";
   }
 
+  if (carregando) {
+    return (
+      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <p className="text-sm text-zinc-500">Carregando dashboard...</p>
+      </div>
+    );
+  }
+
   if (erro) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 p-6 shadow-sm">
@@ -87,30 +102,70 @@ export default function DashboardPage() {
     );
   }
 
-  if (!dados) {
-    return (
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <p className="text-sm text-zinc-500">Carregando dashboard...</p>
-      </div>
-    );
-  }
+  if (!dados) return null;
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-zinc-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Visão geral do estoque e movimentações
-        </p>
+      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-zinc-900">Dashboard</h1>
+          <p className="mt-1 text-sm text-zinc-500">
+            Visão estratégica do estoque, movimentações e alertas
+          </p>
+        </div>
+
+        <button
+          onClick={carregarDashboard}
+          className="rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
+        >
+          Atualizar
+        </button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <CardResumo titulo="Produtos cadastrados" valor={dados.totalProdutos} />
-        <CardResumo titulo="Itens em estoque" valor={dados.totalItensEstoque} />
-        <CardResumo titulo="Estoque baixo" valor={dados.totalEstoqueBaixo} />
+        <CardResumo
+          titulo="Produtos cadastrados"
+          valor={dados.totalProdutos.toString()}
+          descricao="Base total de produtos"
+        />
+        <CardResumo
+          titulo="Itens em estoque"
+          valor={dados.totalItensEstoque.toString()}
+          descricao="Quantidade disponível"
+        />
+        <CardResumo
+          titulo="Estoque baixo"
+          valor={dados.totalEstoqueBaixo.toString()}
+          descricao="Produtos que exigem atenção"
+          destaque="alerta"
+        />
         <CardResumo
           titulo="Solicitações pendentes"
-          valor={dados.solicitacoesPendentes}
+          valor={dados.solicitacoesPendentes.toString()}
+          descricao="Aguardando aprovação"
+          destaque="aviso"
+        />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <MiniCard
+          titulo="Valor estimado em estoque"
+          valor={dados.valorTotalEstoque.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })}
+        />
+        <MiniCard
+          titulo="Total de entradas"
+          valor={dados.totalEntradas.toString()}
+        />
+        <MiniCard
+          titulo="Total de saídas"
+          valor={dados.totalSaidas.toString()}
+        />
+        <MiniCard
+          titulo="Saldo das movimentações"
+          valor={dados.saldoMovimentacoes.toString()}
         />
       </div>
 
@@ -120,7 +175,7 @@ export default function DashboardPage() {
             Entradas x Saídas
           </h2>
           <p className="mt-1 text-sm text-zinc-500">
-            Resumo das movimentações dos últimos dias
+            Comparativo recente das movimentações do estoque
           </p>
         </div>
 
@@ -131,8 +186,8 @@ export default function DashboardPage() {
               <XAxis dataKey="data" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="entrada" name="Entrada" radius={[8, 8, 0, 0]} />
-              <Bar dataKey="saida" name="Saída" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="entrada" name="Entradas" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="saida" name="Saídas" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -146,13 +201,13 @@ export default function DashboardPage() {
                 Produtos com estoque baixo
               </h2>
               <p className="mt-1 text-sm text-zinc-500">
-                Itens que precisam de reposição
+                Produtos que precisam de reposição
               </p>
             </div>
 
             <button
               onClick={exportarEstoqueBaixo}
-              className="rounded-xl bg-zinc-900 px-4 py-2 text-sm text-white hover:bg-zinc-800"
+              className="rounded-xl bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"
             >
               Exportar estoque baixo
             </button>
@@ -176,22 +231,43 @@ export default function DashboardPage() {
                     <th className="px-4 py-3 font-semibold text-zinc-700">
                       Estoque mínimo
                     </th>
+                    <th className="px-4 py-3 font-semibold text-zinc-700">
+                      Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {dados.produtosEstoqueBaixo.map((produto) => (
-                    <tr key={produto.id} className="border-t border-zinc-100">
-                      <td className="px-4 py-4 font-medium text-zinc-900">
-                        {produto.nome}
-                      </td>
-                      <td className="px-4 py-4 text-red-600">
-                        {produto.estoqueAtual}
-                      </td>
-                      <td className="px-4 py-4 text-zinc-600">
-                        {produto.estoqueMinimo}
-                      </td>
-                    </tr>
-                  ))}
+                  {dados.produtosEstoqueBaixo.map((produto) => {
+                    const percentual =
+                      produto.estoqueMinimo > 0
+                        ? (produto.estoqueAtual / produto.estoqueMinimo) * 100
+                        : 0;
+
+                    return (
+                      <tr key={produto.id} className="border-t border-zinc-100">
+                        <td className="px-4 py-4 font-medium text-zinc-900">
+                          {produto.nome}
+                        </td>
+                        <td className="px-4 py-4 text-red-600">
+                          {produto.estoqueAtual}
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {produto.estoqueMinimo}
+                        </td>
+                        <td className="px-4 py-4">
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                              percentual <= 50
+                                ? "bg-red-100 text-red-700"
+                                : "bg-yellow-100 text-yellow-700"
+                            }`}
+                          >
+                            {percentual <= 50 ? "Crítico" : "Atenção"}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -203,7 +279,9 @@ export default function DashboardPage() {
             <h2 className="text-xl font-semibold text-zinc-900">
               Últimas movimentações
             </h2>
-            <p className="mt-1 text-sm text-zinc-500">Histórico recente</p>
+            <p className="mt-1 text-sm text-zinc-500">
+              Histórico recente do sistema
+            </p>
           </div>
 
           {dados.ultimasMovimentacoes.length === 0 ? (
@@ -223,7 +301,7 @@ export default function DashboardPage() {
                         {mov.product.nome}
                       </p>
                       <p className="text-sm text-zinc-500">
-                        {new Date(mov.createdAt).toLocaleDateString("pt-BR")}
+                        {new Date(mov.createdAt).toLocaleString("pt-BR")}
                       </p>
                     </div>
 
@@ -239,7 +317,8 @@ export default function DashboardPage() {
                   </div>
 
                   <p className="mt-3 text-sm text-zinc-600">
-                    Quantidade: <strong>{mov.quantidade}</strong>
+                    Quantidade movimentada:{" "}
+                    <strong className="text-zinc-900">{mov.quantidade}</strong>
                   </p>
                 </div>
               ))}
@@ -254,14 +333,41 @@ export default function DashboardPage() {
 function CardResumo({
   titulo,
   valor,
+  descricao,
+  destaque,
 }: {
   titulo: string;
-  valor: number;
+  valor: string;
+  descricao: string;
+  destaque?: "alerta" | "aviso";
 }) {
+  const classeDestaque =
+    destaque === "alerta"
+      ? "border-red-200 bg-red-50"
+      : destaque === "aviso"
+      ? "border-yellow-200 bg-yellow-50"
+      : "border-zinc-200 bg-white";
+
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+    <div className={`rounded-2xl border p-5 shadow-sm ${classeDestaque}`}>
       <p className="text-sm text-zinc-500">{titulo}</p>
       <p className="mt-2 text-3xl font-semibold text-zinc-900">{valor}</p>
+      <p className="mt-2 text-xs text-zinc-500">{descricao}</p>
+    </div>
+  );
+}
+
+function MiniCard({
+  titulo,
+  valor,
+}: {
+  titulo: string;
+  valor: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <p className="text-sm text-zinc-500">{titulo}</p>
+      <p className="mt-2 text-2xl font-semibold text-zinc-900">{valor}</p>
     </div>
   );
 }

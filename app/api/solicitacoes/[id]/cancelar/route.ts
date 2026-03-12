@@ -1,21 +1,46 @@
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
-  req: Request,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const usuario = await getSessionUser();
+
+    if (!usuario) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
     const { id } = await params;
 
-    const solicitacao = await prisma.solicitacao.findUnique({
-      where: { id },
+    const solicitacao = await prisma.solicitacao.findFirst({
+      where: {
+        id,
+        empresaId: usuario.empresaId,
+      },
+      select: {
+        id: true,
+        userId: true,
+        status: true,
+      },
     });
 
     if (!solicitacao) {
       return NextResponse.json(
         { error: "Solicitação não encontrada" },
         { status: 404 }
+      );
+    }
+
+    const podeCancelar =
+      usuario.role === "admin" || solicitacao.userId === usuario.id;
+
+    if (!podeCancelar) {
+      return NextResponse.json(
+        { error: "Você não tem permissão para cancelar esta solicitação" },
+        { status: 403 }
       );
     }
 
@@ -27,7 +52,7 @@ export async function PATCH(
     }
 
     const atualizada = await prisma.solicitacao.update({
-      where: { id },
+      where: { id: solicitacao.id },
       data: {
         status: "cancelada",
       },

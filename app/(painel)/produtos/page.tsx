@@ -22,6 +22,7 @@ export default function ProdutosPage() {
   const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const [nome, setNome] = useState("");
+  const [sku, setSku] = useState("");
   const [categoria, setCategoria] = useState("");
   const [preco, setPreco] = useState("");
   const [estoqueAtual, setEstoqueAtual] = useState("");
@@ -51,6 +52,9 @@ export default function ProdutosPage() {
   const [scannerMovimentacaoAberto, setScannerMovimentacaoAberto] =
     useState(false);
   const [buscandoProdutoScanner, setBuscandoProdutoScanner] = useState(false);
+  const [mensagemScanner, setMensagemScanner] = useState("");
+  const [erroScanner, setErroScanner] = useState("");
+  const [ultimoCodigoScanner, setUltimoCodigoScanner] = useState("");
 
   const quantidadeMovimentacaoRef = useRef<HTMLInputElement | null>(null);
 
@@ -67,7 +71,7 @@ export default function ProdutosPage() {
     if (modalMovimentacaoAberto) {
       const timer = setTimeout(() => {
         quantidadeMovimentacaoRef.current?.focus();
-      }, 50);
+      }, 80);
 
       return () => clearTimeout(timer);
     }
@@ -100,6 +104,7 @@ export default function ProdutosPage() {
   function limparFormulario() {
     setEditandoId(null);
     setNome("");
+    setSku("");
     setCategoria("");
     setPreco("");
     setEstoqueAtual("");
@@ -112,12 +117,14 @@ export default function ProdutosPage() {
   function preencherFormulario(produto: Produto) {
     setEditandoId(produto.id);
     setNome(produto.nome);
+    setSku(produto.sku || "");
     setCategoria(produto.categoria || "");
     setPreco(produto.preco !== null ? String(produto.preco) : "");
     setEstoqueAtual(String(produto.estoqueAtual));
     setEstoqueMinimo(String(produto.estoqueMinimo));
     setCodigoBarras(produto.codigoBarras || "");
     setScannerAberto(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function salvarProduto() {
@@ -142,6 +149,7 @@ export default function ProdutosPage() {
         },
         body: JSON.stringify({
           nome,
+          sku,
           categoria,
           preco,
           estoqueAtual,
@@ -194,6 +202,7 @@ export default function ProdutosPage() {
       }
 
       await carregarProdutos();
+      alert("Produto excluído com sucesso");
     } catch (error) {
       console.error("Erro ao excluir produto:", error);
       alert("Erro ao excluir produto");
@@ -278,41 +287,45 @@ export default function ProdutosPage() {
     }
   }
 
-async function localizarProdutoPorCodigo(codigo: string) {
-  const codigoLimpo = codigo.trim();
+  async function localizarProdutoPorCodigo(codigo: string) {
+    const codigoLimpo = codigo.trim();
 
-  if (!codigoLimpo) return;
+    if (!codigoLimpo) return;
 
-  try {
-    setBuscandoProdutoScanner(true);
+    try {
+      setBuscandoProdutoScanner(true);
+      setErroScanner("");
+      setMensagemScanner("");
+      setUltimoCodigoScanner(codigoLimpo);
 
-    const response = await fetch(
-      `/api/produtos/codigo/${encodeURIComponent(codigoLimpo)}`,
-      { cache: "no-store" }
-    );
+      const response = await fetch(
+        `/api/produtos/codigo/${encodeURIComponent(codigoLimpo)}`,
+        { cache: "no-store" }
+      );
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      alert(data.error || "Produto não encontrado");
-      return;
+      if (!response.ok) {
+        setErroScanner(data.error || "Produto não encontrado");
+        return;
+      }
+
+      const produto = data as Produto;
+
+      setMensagemScanner(`Produto encontrado: ${produto.nome}`);
+      setScannerMovimentacaoAberto(false);
+      setProdutoMovimentacao(produto);
+      setTipoMovimentacao("entrada");
+      setQuantidadeMovimentacao("");
+      setObservacaoMovimentacao("Movimentação por scanner");
+      setModalMovimentacaoAberto(true);
+    } catch (error) {
+      console.error("Erro ao localizar produto pelo scanner:", error);
+      setErroScanner("Erro ao localizar produto");
+    } finally {
+      setBuscandoProdutoScanner(false);
     }
-
-    const produto = data as Produto;
-
-    setScannerMovimentacaoAberto(false);
-    setProdutoMovimentacao(produto);
-    setTipoMovimentacao("entrada");
-    setQuantidadeMovimentacao("");
-    setObservacaoMovimentacao("Movimentação por scanner");
-    setModalMovimentacaoAberto(true);
-  } catch (error) {
-    console.error("Erro ao localizar produto pelo scanner:", error);
-    alert("Erro ao localizar produto");
-  } finally {
-    setBuscandoProdutoScanner(false);
   }
-}
 
   async function exportarCsv() {
     try {
@@ -490,6 +503,16 @@ async function localizarProdutoPorCodigo(codigo: string) {
           </div>
 
           <div>
+            <label className="mb-1 block text-sm text-zinc-600">SKU</label>
+            <input
+              value={sku}
+              onChange={(e) => setSku(e.target.value)}
+              className="w-full rounded-lg border border-zinc-300 px-3 py-2"
+              placeholder="Opcional"
+            />
+          </div>
+
+          <div>
             <label className="mb-1 block text-sm text-zinc-600">
               Categoria
             </label>
@@ -551,10 +574,10 @@ async function localizarProdutoPorCodigo(codigo: string) {
 
               <button
                 type="button"
-                onClick={() => setScannerAberto(true)}
+                onClick={() => setScannerAberto((prev) => !prev)}
                 className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-100"
               >
-                Escanear
+                {scannerAberto ? "Fechar" : "Escanear"}
               </button>
             </div>
 
@@ -566,18 +589,13 @@ async function localizarProdutoPorCodigo(codigo: string) {
 
         {scannerAberto && (
           <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm text-zinc-600">
-                Aponte a câmera para o código de barras
+            <div className="mb-3">
+              <p className="text-sm font-medium text-zinc-700">
+                Scanner para código de barras
               </p>
-
-              <button
-                type="button"
-                onClick={() => setScannerAberto(false)}
-                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm hover:bg-zinc-100"
-              >
-                Fechar
-              </button>
+              <p className="text-sm text-zinc-500">
+                Leia o código e o campo será preenchido automaticamente.
+              </p>
             </div>
 
             <BarcodeScanner
@@ -614,7 +632,10 @@ async function localizarProdutoPorCodigo(codigo: string) {
         />
         <CardResumo
           titulo="Valor estimado"
-          valor={`R$ ${valorTotalEstoqueFiltrado.toFixed(2)}`}
+          valor={valorTotalEstoqueFiltrado.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })}
         />
       </div>
 
@@ -707,7 +728,12 @@ async function localizarProdutoPorCodigo(codigo: string) {
               </button>
 
               <button
-                onClick={() => setScannerMovimentacaoAberto(true)}
+                onClick={() => {
+                  setErroScanner("");
+                  setMensagemScanner("");
+                  setUltimoCodigoScanner("");
+                  setScannerMovimentacaoAberto(true);
+                }}
                 className="rounded-xl bg-emerald-600 px-4 py-2 text-sm text-white hover:bg-emerald-700"
               >
                 Movimentar por scanner
@@ -750,7 +776,12 @@ async function localizarProdutoPorCodigo(codigo: string) {
                       <td className="p-3">{produto.codigoBarras || "-"}</td>
                       <td className="p-3">{produto.categoria || "-"}</td>
                       <td className="p-3">
-                        {produto.preco !== null ? `R$ ${produto.preco}` : "-"}
+                        {produto.preco !== null
+                          ? produto.preco.toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })
+                          : "-"}
                       </td>
                       <td className="p-3">{produto.estoqueAtual}</td>
                       <td className="p-3">
@@ -940,6 +971,24 @@ async function localizarProdutoPorCodigo(codigo: string) {
                 Fechar
               </button>
             </div>
+
+            {mensagemScanner && (
+              <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                {mensagemScanner}
+              </div>
+            )}
+
+            {erroScanner && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {erroScanner}
+              </div>
+            )}
+
+            {ultimoCodigoScanner && (
+              <div className="mb-4 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600">
+                Último código lido: <strong>{ultimoCodigoScanner}</strong>
+              </div>
+            )}
 
             <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
               {buscandoProdutoScanner ? (

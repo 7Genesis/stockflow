@@ -16,8 +16,16 @@ export async function GET() {
       );
     }
 
+    if (usuarioLogado.role !== "admin") {
+      return NextResponse.json(
+        { error: "Apenas administradores podem visualizar usuários" },
+        { status: 403 }
+      );
+    }
+
     const usuarios = await prisma.user.findMany({
       where: {
+        empresaId: usuarioLogado.empresaId,
       },
       orderBy: { createdAt: "desc" },
       select: {
@@ -51,6 +59,13 @@ export async function POST(req: Request) {
       );
     }
 
+    if (usuarioLogado.role !== "admin") {
+      return NextResponse.json(
+        { error: "Apenas administradores podem cadastrar usuários" },
+        { status: 403 }
+      );
+    }
+
     const body = (await req.json()) as {
       nome?: string;
       email?: string;
@@ -72,13 +87,14 @@ export async function POST(req: Request) {
 
     const usuarioExistente = await prisma.user.findFirst({
       where: {
+        empresaId: usuarioLogado.empresaId,
         email,
       },
     });
 
     if (usuarioExistente) {
       return NextResponse.json(
-        { error: "Já existe um usuário com esse email" },
+        { error: "Já existe um usuário com esse email nesta empresa" },
         { status: 400 }
       );
     }
@@ -87,6 +103,7 @@ export async function POST(req: Request) {
 
     const usuario = await prisma.user.create({
       data: {
+        empresaId: usuarioLogado.empresaId,
         nome,
         email,
         senha: senhaHash,

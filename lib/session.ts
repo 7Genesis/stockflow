@@ -5,6 +5,7 @@ export type SessionUser = {
   nome: string;
   email: string;
   role: "admin" | "user";
+  empresaId: string;
 };
 
 export async function getSessionUser(): Promise<SessionUser | null> {
@@ -12,12 +13,30 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     const cookieStore = await cookies();
     const session = cookieStore.get("session");
 
-    if (!session?.value) return null;
+    if (!session?.value) {
+      return null;
+    }
 
-    const decodedValue = decodeURIComponent(session.value);
-    const json = Buffer.from(decodedValue, "base64").toString("utf-8");
+    const json = Buffer.from(session.value, "base64").toString("utf-8");
+    const parsed = JSON.parse(json) as Partial<SessionUser>;
 
-    return JSON.parse(json) as SessionUser;
+    if (
+      !parsed?.id ||
+      !parsed?.nome ||
+      !parsed?.email ||
+      !parsed?.role ||
+      !parsed?.empresaId
+    ) {
+      return null;
+    }
+
+    return {
+      id: parsed.id,
+      nome: parsed.nome,
+      email: parsed.email,
+      role: parsed.role,
+      empresaId: parsed.empresaId,
+    };
   } catch (error) {
     console.error("Erro ao ler sessão:", error);
     return null;

@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 type SessionUser = {
   id: string;
   nome: string;
   email: string;
   role: "admin" | "user";
+  empresaId: string;
 };
 
 function getSessionUser(): SessionUser | null {
@@ -29,17 +31,35 @@ function getSessionUser(): SessionUser | null {
   }
 }
 
+type NavItem = {
+  href: string;
+  label: string;
+};
+
 export default function PainelLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [usuario, setUsuario] = useState<SessionUser | null>(null);
+  const [carregandoSessao, setCarregandoSessao] = useState(true);
 
   useEffect(() => {
     const session = getSessionUser();
+
+    if (!session) {
+      setUsuario(null);
+      setCarregandoSessao(false);
+      router.replace("/login");
+      return;
+    }
+
     setUsuario(session);
-  }, []);
+    setCarregandoSessao(false);
+  }, [router]);
 
   async function sair() {
     try {
@@ -49,114 +69,174 @@ export default function PainelLayout({
     } catch (error) {
       console.error("Erro ao sair:", error);
     } finally {
-      window.location.href = "/login";
+      router.replace("/login");
     }
   }
 
   const isAdmin = usuario?.role === "admin";
   const isUser = usuario?.role === "user";
 
+  const menuAdmin = useMemo<NavItem[]>(
+    () => [
+      { href: "/dashboard", label: "Dashboard" },
+      { href: "/produtos", label: "Produtos" },
+      { href: "/movimentacoes", label: "Movimentações" },
+      { href: "/scanner", label: "Scanner" },
+      { href: "/nfe", label: "Importar NF-e" },
+      { href: "/fornecedores", label: "Fornecedores" },
+      { href: "/relatorios/fornecedores", label: "Relatório Fornecedores" },
+      { href: "/solicitacoes", label: "Solicitações" },
+      { href: "/usuarios", label: "Usuários" },
+    ],
+    []
+  );
+
+  const menuGeral = useMemo<NavItem[]>(
+    () => [
+      { href: "/minhas-solicitacoes", label: "Minhas Solicitações" },
+      { href: "/perfil", label: "Perfil" },
+    ],
+    []
+  );
+
+  function isActive(href: string) {
+    if (href === "/dashboard") {
+      return pathname === href;
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
+  if (carregandoSessao) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-100 text-zinc-500">
+        Carregando...
+      </div>
+    );
+  }
+
+  if (!usuario) return null;
+
   return (
     <div className="min-h-screen bg-zinc-100 text-zinc-900">
-      <div className="grid min-h-screen grid-cols-[260px_1fr]">
-        <aside className="border-r border-zinc-200 bg-white p-6">
-          <h1 className="mb-2 text-2xl font-bold">StockFlow</h1>
-
-          {usuario && (
-            <div className="mb-8 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-              <p className="font-medium text-zinc-900">{usuario.nome}</p>
-              <p className="text-sm text-zinc-500">{usuario.email}</p>
-
-              <div className="mt-2 flex flex-wrap gap-2">
-                <span className="inline-block rounded-full bg-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-700">
-                  {usuario.role}
-                </span>
+      <div className="grid min-h-screen lg:grid-cols-[280px_1fr]">
+        <aside className="border-r border-zinc-200 bg-white">
+          <div className="flex h-full flex-col">
+            <div className="border-b border-zinc-200 px-6 py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-2xl font-bold tracking-tight text-zinc-900">
+                    StockFlow
+                  </h1>
+                  <p className="mt-1 text-sm text-zinc-500">
+                    Gestão inteligente de estoque
+                  </p>
+                </div>
               </div>
             </div>
-          )}
 
-          <nav className="space-y-2">
-            {isAdmin && (
-              <>
-                <a
-                  href="/dashboard"
-                  className="block rounded-xl px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100"
-                >
-                  Dashboard
-                </a>
+            <div className="px-6 py-6">
+              <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+                <p className="text-sm font-semibold text-zinc-900">
+                  {usuario.nome}
+                </p>
+                <p className="mt-1 break-all text-sm text-zinc-500">
+                  {usuario.email}
+                </p>
 
-                <a
-                  href="/produtos"
-                  className="block rounded-xl px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100"
-                >
-                  Produtos
-                </a>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className="inline-flex rounded-full bg-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-700">
+                    {usuario.role}
+                  </span>
+                  <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                    Empresa {usuario.empresaId.slice(0, 8)}
+                  </span>
+                </div>
+              </div>
+            </div>
 
-                <a
-                  href="/movimentacoes"
-                  className="block rounded-xl px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100"
-                >
-                  Movimentações
-                </a>
+            <div className="flex-1 overflow-y-auto px-4 pb-6">
+              {isAdmin && (
+                <div className="mb-6">
+                  <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                    Administração
+                  </p>
 
-                <a
-                  href="/scanner"
-                  className="block rounded-xl px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100"
-                >
-                  Scanner
-                </a>
+                  <nav className="space-y-1">
+                    {menuAdmin.map((item) => (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        className={`block rounded-xl px-4 py-3 text-sm font-medium transition ${
+                          isActive(item.href)
+                            ? "bg-zinc-900 text-white"
+                            : "text-zinc-700 hover:bg-zinc-100"
+                        }`}
+                      >
+                        {item.label}
+                      </a>
+                    ))}
+                  </nav>
+                </div>
+              )}
 
-                <a
-                  href="/solicitacoes"
-                  className="block rounded-xl px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100"
-                >
-                  Solicitações
-                </a>
+              {(isAdmin || isUser) && (
+                <div>
+                  <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                    Conta
+                  </p>
 
-                <a
-                  href="/usuarios"
-                  className="block rounded-xl px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100"
-                >
-                  Usuários
-                </a>
-              </>
-            )}
+                  <nav className="space-y-1">
+                    {menuGeral.map((item) => (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        className={`block rounded-xl px-4 py-3 text-sm font-medium transition ${
+                          isActive(item.href)
+                            ? "bg-zinc-900 text-white"
+                            : "text-zinc-700 hover:bg-zinc-100"
+                        }`}
+                      >
+                        {item.label}
+                      </a>
+                    ))}
+                  </nav>
+                </div>
+              )}
+            </div>
 
-            {(isAdmin || isUser) && (
-              <>
-                <a
-                  href="/minhas-solicitacoes"
-                  className="block rounded-xl px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100"
-                >
-                  Minhas Solicitações
-                </a>
-
-                <a
-                  href="/perfil"
-                  className="block rounded-xl px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100"
-                >
-                  Perfil
-                </a>
-              </>
-            )}
-          </nav>
-
-          <button
-            onClick={sair}
-            className="mt-8 w-full rounded-xl border border-zinc-300 px-4 py-3 text-sm text-zinc-700 hover:bg-zinc-100"
-          >
-            Sair
-          </button>
+            <div className="border-t border-zinc-200 p-4">
+              <button
+                onClick={sair}
+                className="w-full rounded-xl border border-zinc-300 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+              >
+                Sair
+              </button>
+            </div>
+          </div>
         </aside>
 
-        <div className="flex flex-col">
-          <header className="border-b border-zinc-200 bg-white px-8 py-4">
-            <p className="text-sm text-zinc-500">
-              Sistema de controle de estoque
-            </p>
+        <div className="flex min-w-0 flex-col">
+          <header className="border-b border-zinc-200 bg-white px-6 py-4 md:px-8">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-sm font-medium text-zinc-900">
+                  Painel operacional
+                </p>
+                <p className="text-sm text-zinc-500">
+                  Controle de estoque, usuários, fornecedores e NF-e
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm text-zinc-600">
+                Ambiente ativo
+              </div>
+            </div>
           </header>
 
-          <main className="flex-1 p-8">{children}</main>
+          <main className="flex-1 p-6 md:p-8">
+            <div className="mx-auto w-full max-w-7xl">{children}</div>
+          </main>
         </div>
       </div>
     </div>

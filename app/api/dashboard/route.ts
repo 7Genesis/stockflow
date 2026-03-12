@@ -4,6 +4,12 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+type GraficoItem = {
+  data: string;
+  entrada: number;
+  saida: number;
+};
+
 export async function GET() {
   try {
     const usuario = await getSessionUser();
@@ -14,6 +20,7 @@ export async function GET() {
 
     const produtos = await prisma.product.findMany({
       where: {
+        empresaId: usuario.empresaId,
       },
       orderBy: {
         nome: "asc",
@@ -22,6 +29,7 @@ export async function GET() {
 
     const movimentacoes = await prisma.stockMovement.findMany({
       where: {
+        empresaId: usuario.empresaId,
       },
       include: {
         product: {
@@ -33,59 +41,91 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
-      take: 5,
+      take: 20,
+    });
+
+    const movimentacoesGrafico = await prisma.stockMovement.findMany({
+      where: {
+        empresaId: usuario.empresaId,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
     });
 
     const solicitacoesPendentes = await prisma.solicitacao.count({
       where: {
+        empresaId: usuario.empresaId,
         status: "pendente",
       },
     });
 
-    const produtosEstoqueBaixo = produtos.filter(
-      (produto) => produto.estoqueAtual <= produto.estoqueMinimo
-    );
+    const produtosEstoqueBaixo = produtos
+      .filter((produto) => produto.estoqueAtual <= produto.estoqueMinimo)
+      .sort((a, b) => {
+        const percentualA =
+          a.estoqueMinimo > 0 ? a.estoqueAtual / a.estoqueMinimo : 0;
+        const percentualB =
+          b.estoqueMinimo > 0 ? b.estoqueAtual / b.estoqueMinimo : 0;
+
+        return percentualA - percentualB;
+      });
 
     const totalProdutos = produtos.length;
+
     const totalItensEstoque = produtos.reduce(
       (total, produto) => total + produto.estoqueAtual,
       0
     );
+
     const totalEstoqueBaixo = produtosEstoqueBaixo.length;
 
-    const graficoMap = new Map<
-      string,
-      { data: string; entrada: number; saida: number }
-    >();
+    const valorTotalEstoque = produtos.reduce((total, produto) => {
+      const preco = produto.preco ?? 0;
+      return total + preco * produto.estoqueAtual;
+    }, 0);
 
-    movimentacoes
-      .slice()
-      .reverse()
-      .forEach((mov) => {
-        const data = new Date(mov.createdAt).toLocaleDateString("pt-BR");
+    const totalEntradas = movimentacoesGrafico
+      .filter((mov) => mov.tipo === "entrada")
+      .reduce((total, mov) => total + mov.quantidade, 0);
 
-        if (!graficoMap.has(data)) {
-          graficoMap.set(data, {
-            data,
-            entrada: 0,
-            saida: 0,
-          });
-        }
+    const totalSaidas = movimentacoesGrafico
+      .filter((mov) => mov.tipo === "saida")
+      .reduce((total, mov) => total + mov.quantidade, 0);
 
-        const item = graficoMap.get(data)!;
+    const saldoMovimentacoes = totalEntradas - totalSaidas;
 
-        if (mov.tipo === "entrada") {
-          item.entrada += mov.quantidade;
-        } else {
-          item.saida += mov.quantidade;
-        }
-      });
+    const graficoMap = new Map<string, GraficoItem>();
+
+    movimentacoesGrafico.forEach((movimentacao) => {
+      const data = new Date(movimentacao.createdAt).toLocaleDateString("pt-BR");
+
+      if (!graficoMap.has(data)) {
+        graficoMap.set(data, {
+          data,
+          entrada: 0,
+          saida: 0,
+        });
+      }
+
+      const item = graficoMap.get(data)!;
+
+      if (movimentacao.tipo === "entrada") {
+        item.entrada += movimentacao.quantidade;
+      } else {
+        item.saida += movimentacao.quantidade;
+      }
+    });
 
     return NextResponse.json({
       totalProdutos,
       totalItensEstoque,
       totalEstoqueBaixo,
       solicitacoesPendentes,
+      valorTotalEstoque,
+      totalEntradas,
+      totalSaidas,
+      saldoMovimentacoes,
       produtosEstoqueBaixo: produtosEstoqueBaixo.slice(0, 10),
       ultimasMovimentacoes: movimentacoes,
       graficoMovimentacoes: Array.from(graficoMap.values()),

@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/session";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +12,19 @@ function escaparCsv(valor: string | number | null | undefined) {
 
 export async function GET() {
   try {
+    const usuario = await getSessionUser();
+
+    if (!usuario) {
+      return NextResponse.json(
+        { error: "Não autenticado" },
+        { status: 401 }
+      );
+    }
+
     const produtos = await prisma.product.findMany({
+      where: {
+        empresaId: usuario.empresaId,
+      },
       orderBy: {
         createdAt: "desc",
       },
