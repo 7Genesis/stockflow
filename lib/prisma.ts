@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
@@ -19,7 +19,7 @@ const pool = new Pool({
 const adapter = new PrismaPg(pool);
 
 const prisma =
-  global.prisma ||
+  global.prisma ??
   new PrismaClient({
     adapter,
     log: ["error"],
