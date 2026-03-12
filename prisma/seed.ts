@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import bcrypt from "bcryptjs";
@@ -22,9 +22,7 @@ async function main() {
   const senhaUserHash = await bcrypt.hash("123456", 10);
 
   const empresa = await prisma.empresa.upsert({
-    where: {
-      cnpj: "00000000000191",
-    },
+    where: { cnpj: "00000000000191" },
     update: {},
     create: {
       nome: "Empresa Demo",
@@ -71,9 +69,6 @@ async function main() {
   }
 
   console.log("Seed executado com sucesso.");
-  console.log("Empresa:", empresa.nome);
-  console.log("Admin: admin@stockflow.com | Senha: 123456");
-  console.log("User: user@stockflow.com | Senha: 123456");
 }
 
 main()
