@@ -22,3 +22,4 @@ Recharts
 - Convites de usuários
 - Alertas de estoque baixo
 - Dashboard analítico
+- 
