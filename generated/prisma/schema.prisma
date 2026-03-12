@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Empresa {
+  id        String   @id @default(cuid())
+  nome      String
+  cnpj      String?  @unique
+  createdAt DateTime @default(now())
+
+  usuarios      User[]
+  produtos      Product[]
+  movimentacoes StockMovement[]
+  solicitacoes  Solicitacao[]
+  fornecedores  Fornecedor[]
+  nfeImports    NfeImport[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  empresaId String
+  nome      String
+  email     String
+  senha     String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+
+  empresa      Empresa       @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  solicitacoes Solicitacao[]
+
+  @@unique([empresaId, email])
+  @@index([empresaId])
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  empresaId     String
+  nome          String
+  sku           String?
+  codigoBarras  String?
+  categoria     String?
+  custo         Float?
+  preco         Float?
+  estoqueAtual  Float    @default(0)
+  estoqueMinimo Float    @default(0)
+  createdAt     DateTime @default(now())
+
+  empresa      Empresa         @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  movements    StockMovement[]
+  solicitacoes Solicitacao[]
+  nfeItens     NfeImportItem[]
+
+  @@unique([empresaId, sku])
+  @@unique([empresaId, codigoBarras])
+  @@index([empresaId])
+  @@index([nome])
+}
+
+model StockMovement {
+  id         String   @id @default(cuid())
+  empresaId  String
+  productId  String
+  tipo       String
+  quantidade Float
+  observacao String?
+  createdAt  DateTime @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([empresaId])
+  @@index([productId])
+  @@index([createdAt])
+}
+
+model Solicitacao {
+  id         String   @id @default(cuid())
+  empresaId  String
+  userId     String
+  productId  String
+  quantidade Float
+  status     String   @default("pendente")
+  createdAt  DateTime @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([empresaId])
+  @@index([userId])
+  @@index([productId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Fornecedor {
+  id        String   @id @default(cuid())
+  empresaId String
+  nome      String
+  cnpj      String
+  createdAt DateTime @default(now())
+
+  empresa      Empresa     @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  notasFiscais NfeImport[]
+
+  @@unique([empresaId, cnpj])
+  @@index([empresaId])
+  @@index([nome])
+}
+
+model NfeImport {
+  id             String    @id @default(cuid())
+  empresaId      String
+  chaveAcesso    String
+  numeroNota     String?
+  serie          String?
+  fornecedor     String?
+  cnpjFornecedor String?
+  fornecedorId   String?
+  dataEmissao    DateTime?
+  valorTotal     Float?
+  xmlOriginal    String?
+  createdAt      DateTime  @default(now())
+
+  empresa       Empresa         @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  fornecedorRef Fornecedor?     @relation(fields: [fornecedorId], references: [id], onDelete: SetNull)
+  itens         NfeImportItem[]
+
+  @@unique([empresaId, chaveAcesso])
+  @@index([empresaId])
+  @@index([fornecedorId])
+  @@index([dataEmissao])
+  @@index([createdAt])
+}
+
+model NfeImportItem {
+  id            String  @id @default(cuid())
+  nfeImportId   String
+  productId     String?
+  codigo        String?
+  codigoBarras  String?
+  descricao     String
+  quantidade    Float
+  valorUnitario Float?
+  ncm           String?
+  cfop          String?
+  unidade       String?
+
+  nfeImport NfeImport @relation(fields: [nfeImportId], references: [id], onDelete: Cascade)
+  product   Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([nfeImportId])
+  @@index([productId])
+  @@index([descricao])
+}

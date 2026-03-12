@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "../generated/prisma/client";
+import { PrismaClient } from "../generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import bcrypt from "bcryptjs";
@@ -22,7 +22,9 @@ async function main() {
   const senhaUserHash = await bcrypt.hash("123456", 10);
 
   const empresa = await prisma.empresa.upsert({
-    where: { cnpj: "00000000000191" },
+    where: {
+      cnpj: "00000000000191",
+    },
     update: {},
     create: {
       nome: "Empresa Demo",
