@@ -2,25 +2,27 @@ import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { registrarAuditoria } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
-type ConviteBody = {
-  nome?: string;
-  email?: string;
-  role?: string;
-};
+function adicionarDias(data: Date, dias: number) {
+  const novaData = new Date(data);
+  novaData.setDate(novaData.getDate() + dias);
+  return novaData;
+}
 
 export async function GET() {
   try {
-    const usuario = await getSessionUser();
+    const usuarioLogado = await getSessionUser();
 
-    if (!usuario) {
-      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    if (!usuarioLogado) {
+      return NextResponse.json(
+        { error: "Não autenticado" },
+        { status: 401 }
+      );
     }
 
-    if (usuario.role !== "admin") {
+    if (usuarioLogado.role !== "admin") {
       return NextResponse.json(
         { error: "Apenas administradores podem visualizar convites" },
         { status: 403 }
@@ -29,7 +31,7 @@ export async function GET() {
 
     const convites = await prisma.userInvite.findMany({
       where: {
-        empresaId: usuario.empresaId,
+        empresaId: usuarioLogado.empresaId,
       },
       orderBy: {
         createdAt: "desc",
@@ -39,8 +41,8 @@ export async function GET() {
         nome: true,
         email: true,
         role: true,
-        token: true,
         status: true,
+        token: true,
         expiresAt: true,
         createdAt: true,
       },
@@ -48,10 +50,10 @@ export async function GET() {
 
     return NextResponse.json(convites);
   } catch (error) {
-    console.error("Erro ao listar convites:", error);
+    console.error("Erro ao buscar convites:", error);
 
     return NextResponse.json(
-      { error: "Erro ao listar convites" },
+      { error: "Erro ao buscar convites" },
       { status: 500 }
     );
   }
@@ -59,20 +61,27 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const usuario = await getSessionUser();
+    const usuarioLogado = await getSessionUser();
 
-    if (!usuario) {
-      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    if (!usuarioLogado) {
+      return NextResponse.json(
+        { error: "Não autenticado" },
+        { status: 401 }
+      );
     }
 
-    if (usuario.role !== "admin") {
+    if (usuarioLogado.role !== "admin") {
       return NextResponse.json(
         { error: "Apenas administradores podem criar convites" },
         { status: 403 }
       );
     }
 
-    const body = (await req.json()) as ConviteBody;
+    const body = (await req.json()) as {
+      nome?: string;
+      email?: string;
+      role?: string;
+    };
 
     const nome = String(body.nome ?? "").trim();
     const email = String(body.email ?? "").trim().toLowerCase();
@@ -80,56 +89,64 @@ export async function POST(req: Request) {
 
     if (!nome || !email) {
       return NextResponse.json(
-        { error: "Nome e email são obrigatórios" },
+        { error: "Nome e email são obrigatórios." },
         { status: 400 }
       );
     }
 
-    if (role !== "admin" && role !== "user") {
-      return NextResponse.json({ error: "Perfil inválido" }, { status: 400 });
+    if (role !== "user" && role !== "admin") {
+      return NextResponse.json(
+        { error: "Perfil inválido." },
+        { status: 400 }
+      );
     }
 
     const usuarioExistente = await prisma.user.findFirst({
       where: {
-        empresaId: usuario.empresaId,
+        empresaId: usuarioLogado.empresaId,
         email,
       },
-      select: { id: true },
+      select: {
+        id: true,
+      },
     });
 
     if (usuarioExistente) {
       return NextResponse.json(
-        { error: "Já existe um usuário com esse email nesta empresa" },
+        { error: "Já existe um usuário com esse email nesta empresa." },
         { status: 400 }
       );
     }
 
-    const convitePendente = await prisma.userInvite.findFirst({
+    const conviteExistente = await prisma.userInvite.findFirst({
       where: {
-        empresaId: usuario.empresaId,
+        empresaId: usuarioLogado.empresaId,
         email,
         status: "pendente",
       },
-      select: { id: true },
+      select: {
+        id: true,
+      },
     });
 
-    if (convitePendente) {
+    if (conviteExistente) {
       return NextResponse.json(
-        { error: "Já existe um convite pendente para esse email" },
+        { error: "Já existe um convite pendente para esse email." },
         { status: 400 }
       );
     }
 
     const token = crypto.randomBytes(24).toString("hex");
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
+    const expiresAt = adicionarDias(new Date(), 7);
 
     const convite = await prisma.userInvite.create({
       data: {
-        empresaId: usuario.empresaId,
+        empresaId: usuarioLogado.empresaId,
         nome,
         email,
         role,
         token,
+        status: "pendente",
         expiresAt,
       },
       select: {
@@ -137,23 +154,24 @@ export async function POST(req: Request) {
         nome: true,
         email: true,
         role: true,
-        token: true,
         status: true,
+        token: true,
         expiresAt: true,
         createdAt: true,
       },
     });
 
-    await registrarAuditoria({
-      empresaId: usuario.empresaId,
-      userId: usuario.id,
-      acao: "criar",
-      entidade: "convite",
-      entidadeId: convite.id,
-      descricao: `Convite criado para ${convite.email} com perfil ${convite.role}`,
-    });
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const linkConvite = `${appUrl}/aceitar-convite/${convite.token}`;
 
-    return NextResponse.json(convite, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        convite,
+        linkConvite,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Erro ao criar convite:", error);
 

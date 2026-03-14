@@ -4,7 +4,7 @@ export type SessionUser = {
   id: string;
   nome: string;
   email: string;
-  role: "admin" | "user";
+  role: "superadmin" | "admin" | "user";
   empresaId: string;
 };
 

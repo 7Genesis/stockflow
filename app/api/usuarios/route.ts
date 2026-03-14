@@ -1,9 +1,15 @@
 import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
+
+function adicionarDias(data: Date, dias: number) {
+  const novaData = new Date(data);
+  novaData.setDate(novaData.getDate() + dias);
+  return novaData;
+}
 
 export async function GET() {
   try {
@@ -18,31 +24,36 @@ export async function GET() {
 
     if (usuarioLogado.role !== "admin") {
       return NextResponse.json(
-        { error: "Apenas administradores podem visualizar usuários" },
+        { error: "Apenas administradores podem visualizar convites" },
         { status: 403 }
       );
     }
 
-    const usuarios = await prisma.user.findMany({
+    const convites = await prisma.userInvite.findMany({
       where: {
         empresaId: usuarioLogado.empresaId,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: {
+        createdAt: "desc",
+      },
       select: {
         id: true,
         nome: true,
         email: true,
         role: true,
+        status: true,
+        token: true,
+        expiresAt: true,
         createdAt: true,
       },
     });
 
-    return NextResponse.json(usuarios);
+    return NextResponse.json(convites);
   } catch (error) {
-    console.error("Erro ao buscar usuários:", error);
+    console.error("Erro ao buscar convites:", error);
 
     return NextResponse.json(
-      { error: "Erro ao buscar usuários" },
+      { error: "Erro ao buscar convites" },
       { status: 500 }
     );
   }
@@ -61,7 +72,7 @@ export async function POST(req: Request) {
 
     if (usuarioLogado.role !== "admin") {
       return NextResponse.json(
-        { error: "Apenas administradores podem cadastrar usuários" },
+        { error: "Apenas administradores podem criar convites" },
         { status: 403 }
       );
     }
@@ -69,18 +80,23 @@ export async function POST(req: Request) {
     const body = (await req.json()) as {
       nome?: string;
       email?: string;
-      senha?: string;
       role?: string;
     };
 
     const nome = String(body.nome ?? "").trim();
     const email = String(body.email ?? "").trim().toLowerCase();
-    const senha = String(body.senha ?? "").trim();
     const role = String(body.role ?? "user").trim();
 
-    if (!nome || !email || !senha) {
+    if (!nome || !email) {
       return NextResponse.json(
-        { error: "Nome, email e senha são obrigatórios" },
+        { error: "Nome e email são obrigatórios." },
+        { status: 400 }
+      );
+    }
+
+    if (role !== "user" && role !== "admin") {
+      return NextResponse.json(
+        { error: "Perfil inválido." },
         { status: 400 }
       );
     }
@@ -90,40 +106,77 @@ export async function POST(req: Request) {
         empresaId: usuarioLogado.empresaId,
         email,
       },
+      select: {
+        id: true,
+      },
     });
 
     if (usuarioExistente) {
       return NextResponse.json(
-        { error: "Já existe um usuário com esse email nesta empresa" },
+        { error: "Já existe um usuário com esse email nesta empresa." },
         { status: 400 }
       );
     }
 
-    const senhaHash = await bcrypt.hash(senha, 10);
+    const conviteExistente = await prisma.userInvite.findFirst({
+      where: {
+        empresaId: usuarioLogado.empresaId,
+        email,
+        status: "pendente",
+      },
+      select: {
+        id: true,
+      },
+    });
 
-    const usuario = await prisma.user.create({
+    if (conviteExistente) {
+      return NextResponse.json(
+        { error: "Já existe um convite pendente para esse email." },
+        { status: 400 }
+      );
+    }
+
+    const token = crypto.randomBytes(24).toString("hex");
+    const expiresAt = adicionarDias(new Date(), 7);
+
+    const convite = await prisma.userInvite.create({
       data: {
         empresaId: usuarioLogado.empresaId,
         nome,
         email,
-        senha: senhaHash,
         role,
+        token,
+        status: "pendente",
+        expiresAt,
       },
       select: {
         id: true,
         nome: true,
         email: true,
         role: true,
+        status: true,
+        token: true,
+        expiresAt: true,
         createdAt: true,
       },
     });
 
-    return NextResponse.json(usuario, { status: 201 });
-  } catch (error) {
-    console.error("Erro ao cadastrar usuário:", error);
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const linkConvite = `${appUrl}/aceitar-convite/${convite.token}`;
 
     return NextResponse.json(
-      { error: "Erro ao cadastrar usuário" },
+      {
+        success: true,
+        convite,
+        linkConvite,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Erro ao criar convite:", error);
+
+    return NextResponse.json(
+      { error: "Erro ao criar convite" },
       { status: 500 }
     );
   }

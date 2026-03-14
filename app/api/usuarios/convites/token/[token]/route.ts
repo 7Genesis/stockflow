@@ -27,7 +27,8 @@ export async function GET(_req: Request, { params }: Params) {
           select: {
             id: true,
             nome: true,
-            cnpj: true,
+            tipoDocumento: true,
+            documento: true,
           },
         },
       },

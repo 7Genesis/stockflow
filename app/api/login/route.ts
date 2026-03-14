@@ -2,30 +2,53 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
+export const dynamic = "force-dynamic";
+
+type LoginBody = {
+  email?: string;
+  senha?: string;
+};
+
+type SessionUser = {
+  id: string;
+  nome: string;
+  email: string;
+  role: "superadmin" | "admin" | "user";
+  empresaId: string;
+};
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = (await req.json()) as LoginBody;
 
-    if (!body.email || !body.senha) {
+    const email = String(body.email ?? "").trim().toLowerCase();
+    const senha = String(body.senha ?? "").trim();
+
+    if (!email || !senha) {
       return NextResponse.json(
-        { error: "Email e senha são obrigatórios" },
+        { error: "Email e senha são obrigatórios." },
         { status: 400 }
       );
     }
-
-    const email = String(body.email).trim().toLowerCase();
-    const senha = String(body.senha).trim();
 
     const usuarios = await prisma.user.findMany({
       where: { email },
       orderBy: {
         createdAt: "asc",
       },
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        senha: true,
+        role: true,
+        empresaId: true,
+      },
     });
 
     if (usuarios.length === 0) {
       return NextResponse.json(
-        { error: "Usuário não encontrado" },
+        { error: "Usuário não encontrado." },
         { status: 404 }
       );
     }
@@ -43,16 +66,51 @@ export async function POST(req: Request) {
 
     if (!usuarioValido) {
       return NextResponse.json(
-        { error: "Senha inválida" },
+        { error: "Senha inválida." },
         { status: 401 }
       );
     }
 
-    const sessionUser = {
+    if (usuarioValido.role !== "superadmin") {
+      const assinatura = await prisma.assinatura.findUnique({
+        where: {
+          empresaId: usuarioValido.empresaId,
+        },
+        select: {
+          id: true,
+          status: true,
+          plano: true,
+          dataVencimento: true,
+        },
+      });
+
+      if (!assinatura) {
+        return NextResponse.json(
+          { error: "Empresa sem assinatura vinculada." },
+          { status: 403 }
+        );
+      }
+
+      if (assinatura.status === "suspensa") {
+        return NextResponse.json(
+          { error: "Conta suspensa. Entre em contato com o suporte." },
+          { status: 403 }
+        );
+      }
+
+      if (assinatura.status === "cancelada") {
+        return NextResponse.json(
+          { error: "Conta cancelada." },
+          { status: 403 }
+        );
+      }
+    }
+
+    const sessionUser: SessionUser = {
       id: usuarioValido.id,
       nome: usuarioValido.nome,
       email: usuarioValido.email,
-      role: usuarioValido.role as "admin" | "user",
+      role: usuarioValido.role as "superadmin" | "admin" | "user",
       empresaId: usuarioValido.empresaId,
     };
 
@@ -68,7 +126,7 @@ export async function POST(req: Request) {
 
     response.cookies.set("session", sessionValue, {
       httpOnly: false,
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 24,
@@ -79,7 +137,7 @@ export async function POST(req: Request) {
     console.error("Erro no login:", error);
 
     return NextResponse.json(
-      { error: "Erro ao fazer login" },
+      { error: "Erro ao fazer login." },
       { status: 500 }
     );
   }

@@ -21,14 +21,17 @@ async function main() {
   const senhaAdminHash = await bcrypt.hash("123456", 10);
   const senhaUserHash = await bcrypt.hash("123456", 10);
 
+  const documentoEmpresa = "00000000000191";
+
   const empresa = await prisma.empresa.upsert({
     where: {
-      cnpj: "00000000000191",
+      documento: documentoEmpresa,
     },
     update: {},
     create: {
       nome: "Empresa Demo",
-      cnpj: "00000000000191",
+      tipoDocumento: "cnpj",
+      documento: documentoEmpresa,
     },
   });
 

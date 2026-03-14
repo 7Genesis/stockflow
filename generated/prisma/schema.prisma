@@ -8,11 +8,13 @@ datasource db {
 }
 
 model Empresa {
-  id        String   @id @default(cuid())
-  nome      String
-  cnpj      String?  @unique
-  createdAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  nome          String
+  tipoDocumento String?
+  documento     String?  @unique
+  createdAt     DateTime @default(now())
 
+  assinatura    Assinatura?
   convites      UserInvite[]
   usuarios      User[]
   produtos      Product[]
@@ -21,6 +23,25 @@ model Empresa {
   fornecedores  Fornecedor[]
   nfeImports    NfeImport[]
   auditLogs     AuditLog[]
+  pagamentos    PagamentoSaas[]
+}
+
+model Assinatura {
+  id               String    @id @default(cuid())
+  empresaId        String    @unique
+  status           String    @default("pendente")
+  plano            String    @default("free")
+  dataInicio       DateTime  @default(now())
+  dataVencimento   DateTime?
+  dataCancelamento DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([plano])
+  @@index([dataVencimento])
 }
 
 model User {
@@ -197,5 +218,24 @@ model AuditLog {
   @@index([userId])
   @@index([acao])
   @@index([entidade])
+  @@index([createdAt])
+}
+
+model PagamentoSaas {
+  id        String   @id @default(cuid())
+  empresaId String
+  tipo      String
+  plano     String
+  valor     Float
+  status    String   @default("confirmado")
+  descricao String?
+  createdAt DateTime @default(now())
+
+  empresa Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  @@index([empresaId])
+  @@index([tipo])
+  @@index([plano])
+  @@index([status])
   @@index([createdAt])
 }

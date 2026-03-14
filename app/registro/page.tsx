@@ -7,15 +7,21 @@ export default function RegistroPage() {
   const router = useRouter();
 
   const [empresaNome, setEmpresaNome] = useState("");
-  const [empresaCnpj, setEmpresaCnpj] = useState("");
+  const [documento, setDocumento] = useState("");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [carregando, setCarregando] = useState(false);
 
   async function registrar() {
-    if (!empresaNome.trim() || !nome.trim() || !email.trim() || !senha.trim()) {
-      alert("Preencha empresa, nome, email e senha.");
+    if (
+      !empresaNome.trim() ||
+      !documento.trim() ||
+      !nome.trim() ||
+      !email.trim() ||
+      !senha.trim()
+    ) {
+      alert("Preencha empresa, CPF ou CNPJ, nome, email e senha.");
       return;
     }
 
@@ -29,7 +35,7 @@ export default function RegistroPage() {
         },
         body: JSON.stringify({
           empresaNome,
-          empresaCnpj,
+          documento,
           nome,
           email,
           senha,
@@ -43,8 +49,11 @@ export default function RegistroPage() {
         return;
       }
 
-      alert("Conta criada com sucesso.");
-      router.replace("/dashboard");
+      alert(
+        "Cadastro realizado com sucesso. Agora escolha um plano e entre em contato para liberação da empresa."
+      );
+
+      router.replace("/planos");
     } catch (error) {
       console.error("Erro ao registrar:", error);
       alert("Erro ao criar conta");
@@ -58,7 +67,7 @@ export default function RegistroPage() {
       <div className="w-full max-w-xl rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
         <h1 className="mb-2 text-3xl font-bold text-zinc-900">Criar empresa</h1>
         <p className="mb-6 text-sm text-zinc-500">
-          Cadastre sua empresa e crie o primeiro administrador
+          Cadastre sua empresa, escolha um plano e aguarde a liberação do acesso
         </p>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -70,18 +79,19 @@ export default function RegistroPage() {
               value={empresaNome}
               onChange={(e) => setEmpresaNome(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
+              placeholder="Nome da empresa"
             />
           </div>
 
           <div className="md:col-span-2">
             <label className="mb-1 block text-sm text-zinc-600">
-              CNPJ
+              CPF ou CNPJ
             </label>
             <input
-              value={empresaCnpj}
-              onChange={(e) => setEmpresaCnpj(e.target.value)}
+              value={documento}
+              onChange={(e) => setDocumento(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
-              placeholder="Opcional"
+              placeholder="Informe CPF ou CNPJ válido"
             />
           </div>
 
@@ -93,30 +103,29 @@ export default function RegistroPage() {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
+              placeholder="Seu nome"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-zinc-600">
-              Email
-            </label>
+            <label className="mb-1 block text-sm text-zinc-600">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
+              placeholder="seu@email.com"
             />
           </div>
 
           <div className="md:col-span-2">
-            <label className="mb-1 block text-sm text-zinc-600">
-              Senha
-            </label>
+            <label className="mb-1 block text-sm text-zinc-600">Senha</label>
             <input
               type="password"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               className="w-full rounded-lg border border-zinc-300 px-3 py-2"
+              placeholder="Crie uma senha"
             />
           </div>
         </div>

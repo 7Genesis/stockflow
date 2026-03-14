@@ -2,18 +2,22 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type SessionUser = {
   id: string;
   nome: string;
   email: string;
-  role: "admin" | "user";
+  role: "superadmin" | "admin" | "user";
   empresaId: string;
 };
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const erro = searchParams.get("erro");
+  const sucesso = searchParams.get("sucesso");
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -49,6 +53,11 @@ export default function LoginPage() {
         return;
       }
 
+      if (data.usuario.role === "superadmin") {
+        router.replace("/admin/empresas");
+        return;
+      }
+
       router.replace(
         data.usuario.role === "admin"
           ? "/dashboard"
@@ -62,6 +71,30 @@ export default function LoginPage() {
     }
   }
 
+  function mensagemErro() {
+    if (erro === "assinatura") {
+      return "Sua empresa não possui uma assinatura ativa, está suspensa ou ainda não foi liberada.";
+    }
+
+    if (erro === "sessao") {
+      return "Sua sessão expirou. Faça login novamente.";
+    }
+
+    return "";
+  }
+
+ function mensagemSucesso() {
+  if (sucesso === "senha-redefinida") {
+    return "Senha redefinida com sucesso. Agora você já pode entrar no sistema.";
+  }
+
+  if (sucesso === "convite-aceito") {
+    return "Convite aceito com sucesso. Agora você já pode entrar no sistema.";
+  }
+
+  return "";
+}
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
       <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
@@ -74,6 +107,18 @@ export default function LoginPage() {
 
         <h1 className="mb-2 text-3xl font-bold text-zinc-900">StockFlow</h1>
         <p className="mb-6 text-sm text-zinc-500">Entre no sistema</p>
+
+        {mensagemErro() && (
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {mensagemErro()}
+          </div>
+        )}
+
+        {mensagemSucesso() && (
+          <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            {mensagemSucesso()}
+          </div>
+        )}
 
         <div className="space-y-4">
           <div>
@@ -114,10 +159,26 @@ export default function LoginPage() {
 
           <button
             type="button"
+            onClick={() => router.push("/recuperar-senha")}
+            className="w-full rounded-xl border border-zinc-300 px-6 py-3 text-zinc-700 transition hover:bg-zinc-50"
+          >
+            Esqueci minha senha
+          </button>
+
+          <button
+            type="button"
             onClick={() => router.push("/registro")}
             className="w-full rounded-xl border border-zinc-300 px-6 py-3 text-zinc-700 transition hover:bg-zinc-50"
           >
             Criar empresa
+          </button>
+
+          <button
+            type="button"
+            onClick={() => router.push("/planos")}
+            className="w-full rounded-xl border border-zinc-300 px-6 py-3 text-zinc-700 transition hover:bg-zinc-50"
+          >
+            Ver planos
           </button>
         </div>
       </div>

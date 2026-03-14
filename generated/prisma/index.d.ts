@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type Empresa = $Result.DefaultSelection<Prisma.$EmpresaPayload>
 /**
+ * Model Assinatura
+ * 
+ */
+export type Assinatura = $Result.DefaultSelection<Prisma.$AssinaturaPayload>
+/**
  * Model User
  * 
  */
@@ -63,6 +68,11 @@ export type UserInvite = $Result.DefaultSelection<Prisma.$UserInvitePayload>
  * 
  */
 export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
+/**
+ * Model PagamentoSaas
+ * 
+ */
+export type PagamentoSaas = $Result.DefaultSelection<Prisma.$PagamentoSaasPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -196,6 +206,16 @@ export class PrismaClient<
   get empresa(): Prisma.EmpresaDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.assinatura`: Exposes CRUD operations for the **Assinatura** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Assinaturas
+    * const assinaturas = await prisma.assinatura.findMany()
+    * ```
+    */
+  get assinatura(): Prisma.AssinaturaDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
     * Example usage:
     * ```ts
@@ -284,6 +304,16 @@ export class PrismaClient<
     * ```
     */
   get auditLog(): Prisma.AuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.pagamentoSaas`: Exposes CRUD operations for the **PagamentoSaas** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PagamentoSaas
+    * const pagamentoSaas = await prisma.pagamentoSaas.findMany()
+    * ```
+    */
+  get pagamentoSaas(): Prisma.PagamentoSaasDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -719,6 +749,7 @@ export namespace Prisma {
 
   export const ModelName: {
     Empresa: 'Empresa',
+    Assinatura: 'Assinatura',
     User: 'User',
     Product: 'Product',
     StockMovement: 'StockMovement',
@@ -727,7 +758,8 @@ export namespace Prisma {
     NfeImport: 'NfeImport',
     NfeImportItem: 'NfeImportItem',
     UserInvite: 'UserInvite',
-    AuditLog: 'AuditLog'
+    AuditLog: 'AuditLog',
+    PagamentoSaas: 'PagamentoSaas'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -743,7 +775,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "empresa" | "user" | "product" | "stockMovement" | "solicitacao" | "fornecedor" | "nfeImport" | "nfeImportItem" | "userInvite" | "auditLog"
+      modelProps: "empresa" | "assinatura" | "user" | "product" | "stockMovement" | "solicitacao" | "fornecedor" | "nfeImport" | "nfeImportItem" | "userInvite" | "auditLog" | "pagamentoSaas"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -818,6 +850,80 @@ export namespace Prisma {
           count: {
             args: Prisma.EmpresaCountArgs<ExtArgs>
             result: $Utils.Optional<EmpresaCountAggregateOutputType> | number
+          }
+        }
+      }
+      Assinatura: {
+        payload: Prisma.$AssinaturaPayload<ExtArgs>
+        fields: Prisma.AssinaturaFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AssinaturaFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AssinaturaFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload>
+          }
+          findFirst: {
+            args: Prisma.AssinaturaFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AssinaturaFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload>
+          }
+          findMany: {
+            args: Prisma.AssinaturaFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload>[]
+          }
+          create: {
+            args: Prisma.AssinaturaCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload>
+          }
+          createMany: {
+            args: Prisma.AssinaturaCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AssinaturaCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload>[]
+          }
+          delete: {
+            args: Prisma.AssinaturaDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload>
+          }
+          update: {
+            args: Prisma.AssinaturaUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload>
+          }
+          deleteMany: {
+            args: Prisma.AssinaturaDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AssinaturaUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AssinaturaUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload>[]
+          }
+          upsert: {
+            args: Prisma.AssinaturaUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssinaturaPayload>
+          }
+          aggregate: {
+            args: Prisma.AssinaturaAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAssinatura>
+          }
+          groupBy: {
+            args: Prisma.AssinaturaGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AssinaturaGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AssinaturaCountArgs<ExtArgs>
+            result: $Utils.Optional<AssinaturaCountAggregateOutputType> | number
           }
         }
       }
@@ -1487,6 +1593,80 @@ export namespace Prisma {
           }
         }
       }
+      PagamentoSaas: {
+        payload: Prisma.$PagamentoSaasPayload<ExtArgs>
+        fields: Prisma.PagamentoSaasFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PagamentoSaasFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PagamentoSaasFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload>
+          }
+          findFirst: {
+            args: Prisma.PagamentoSaasFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PagamentoSaasFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload>
+          }
+          findMany: {
+            args: Prisma.PagamentoSaasFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload>[]
+          }
+          create: {
+            args: Prisma.PagamentoSaasCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload>
+          }
+          createMany: {
+            args: Prisma.PagamentoSaasCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PagamentoSaasCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload>[]
+          }
+          delete: {
+            args: Prisma.PagamentoSaasDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload>
+          }
+          update: {
+            args: Prisma.PagamentoSaasUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload>
+          }
+          deleteMany: {
+            args: Prisma.PagamentoSaasDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PagamentoSaasUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PagamentoSaasUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload>[]
+          }
+          upsert: {
+            args: Prisma.PagamentoSaasUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PagamentoSaasPayload>
+          }
+          aggregate: {
+            args: Prisma.PagamentoSaasAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePagamentoSaas>
+          }
+          groupBy: {
+            args: Prisma.PagamentoSaasGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PagamentoSaasGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PagamentoSaasCountArgs<ExtArgs>
+            result: $Utils.Optional<PagamentoSaasCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1596,6 +1776,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     empresa?: EmpresaOmit
+    assinatura?: AssinaturaOmit
     user?: UserOmit
     product?: ProductOmit
     stockMovement?: StockMovementOmit
@@ -1605,6 +1786,7 @@ export namespace Prisma {
     nfeImportItem?: NfeImportItemOmit
     userInvite?: UserInviteOmit
     auditLog?: AuditLogOmit
+    pagamentoSaas?: PagamentoSaasOmit
   }
 
   /* Types for Logging */
@@ -1693,6 +1875,7 @@ export namespace Prisma {
     fornecedores: number
     nfeImports: number
     auditLogs: number
+    pagamentos: number
   }
 
   export type EmpresaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1704,6 +1887,7 @@ export namespace Prisma {
     fornecedores?: boolean | EmpresaCountOutputTypeCountFornecedoresArgs
     nfeImports?: boolean | EmpresaCountOutputTypeCountNfeImportsArgs
     auditLogs?: boolean | EmpresaCountOutputTypeCountAuditLogsArgs
+    pagamentos?: boolean | EmpresaCountOutputTypeCountPagamentosArgs
   }
 
   // Custom InputTypes
@@ -1771,6 +1955,13 @@ export namespace Prisma {
    */
   export type EmpresaCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AuditLogWhereInput
+  }
+
+  /**
+   * EmpresaCountOutputType without action
+   */
+  export type EmpresaCountOutputTypeCountPagamentosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PagamentoSaasWhereInput
   }
 
 
@@ -1942,21 +2133,24 @@ export namespace Prisma {
   export type EmpresaMinAggregateOutputType = {
     id: string | null
     nome: string | null
-    cnpj: string | null
+    tipoDocumento: string | null
+    documento: string | null
     createdAt: Date | null
   }
 
   export type EmpresaMaxAggregateOutputType = {
     id: string | null
     nome: string | null
-    cnpj: string | null
+    tipoDocumento: string | null
+    documento: string | null
     createdAt: Date | null
   }
 
   export type EmpresaCountAggregateOutputType = {
     id: number
     nome: number
-    cnpj: number
+    tipoDocumento: number
+    documento: number
     createdAt: number
     _all: number
   }
@@ -1965,21 +2159,24 @@ export namespace Prisma {
   export type EmpresaMinAggregateInputType = {
     id?: true
     nome?: true
-    cnpj?: true
+    tipoDocumento?: true
+    documento?: true
     createdAt?: true
   }
 
   export type EmpresaMaxAggregateInputType = {
     id?: true
     nome?: true
-    cnpj?: true
+    tipoDocumento?: true
+    documento?: true
     createdAt?: true
   }
 
   export type EmpresaCountAggregateInputType = {
     id?: true
     nome?: true
-    cnpj?: true
+    tipoDocumento?: true
+    documento?: true
     createdAt?: true
     _all?: true
   }
@@ -2059,7 +2256,8 @@ export namespace Prisma {
   export type EmpresaGroupByOutputType = {
     id: string
     nome: string
-    cnpj: string | null
+    tipoDocumento: string | null
+    documento: string | null
     createdAt: Date
     _count: EmpresaCountAggregateOutputType | null
     _min: EmpresaMinAggregateOutputType | null
@@ -2083,8 +2281,10 @@ export namespace Prisma {
   export type EmpresaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nome?: boolean
-    cnpj?: boolean
+    tipoDocumento?: boolean
+    documento?: boolean
     createdAt?: boolean
+    assinatura?: boolean | Empresa$assinaturaArgs<ExtArgs>
     convites?: boolean | Empresa$convitesArgs<ExtArgs>
     usuarios?: boolean | Empresa$usuariosArgs<ExtArgs>
     produtos?: boolean | Empresa$produtosArgs<ExtArgs>
@@ -2093,32 +2293,37 @@ export namespace Prisma {
     fornecedores?: boolean | Empresa$fornecedoresArgs<ExtArgs>
     nfeImports?: boolean | Empresa$nfeImportsArgs<ExtArgs>
     auditLogs?: boolean | Empresa$auditLogsArgs<ExtArgs>
+    pagamentos?: boolean | Empresa$pagamentosArgs<ExtArgs>
     _count?: boolean | EmpresaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["empresa"]>
 
   export type EmpresaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nome?: boolean
-    cnpj?: boolean
+    tipoDocumento?: boolean
+    documento?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["empresa"]>
 
   export type EmpresaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nome?: boolean
-    cnpj?: boolean
+    tipoDocumento?: boolean
+    documento?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["empresa"]>
 
   export type EmpresaSelectScalar = {
     id?: boolean
     nome?: boolean
-    cnpj?: boolean
+    tipoDocumento?: boolean
+    documento?: boolean
     createdAt?: boolean
   }
 
-  export type EmpresaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "cnpj" | "createdAt", ExtArgs["result"]["empresa"]>
+  export type EmpresaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "nome" | "tipoDocumento" | "documento" | "createdAt", ExtArgs["result"]["empresa"]>
   export type EmpresaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    assinatura?: boolean | Empresa$assinaturaArgs<ExtArgs>
     convites?: boolean | Empresa$convitesArgs<ExtArgs>
     usuarios?: boolean | Empresa$usuariosArgs<ExtArgs>
     produtos?: boolean | Empresa$produtosArgs<ExtArgs>
@@ -2127,6 +2332,7 @@ export namespace Prisma {
     fornecedores?: boolean | Empresa$fornecedoresArgs<ExtArgs>
     nfeImports?: boolean | Empresa$nfeImportsArgs<ExtArgs>
     auditLogs?: boolean | Empresa$auditLogsArgs<ExtArgs>
+    pagamentos?: boolean | Empresa$pagamentosArgs<ExtArgs>
     _count?: boolean | EmpresaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type EmpresaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2135,6 +2341,7 @@ export namespace Prisma {
   export type $EmpresaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Empresa"
     objects: {
+      assinatura: Prisma.$AssinaturaPayload<ExtArgs> | null
       convites: Prisma.$UserInvitePayload<ExtArgs>[]
       usuarios: Prisma.$UserPayload<ExtArgs>[]
       produtos: Prisma.$ProductPayload<ExtArgs>[]
@@ -2143,11 +2350,13 @@ export namespace Prisma {
       fornecedores: Prisma.$FornecedorPayload<ExtArgs>[]
       nfeImports: Prisma.$NfeImportPayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+      pagamentos: Prisma.$PagamentoSaasPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       nome: string
-      cnpj: string | null
+      tipoDocumento: string | null
+      documento: string | null
       createdAt: Date
     }, ExtArgs["result"]["empresa"]>
     composites: {}
@@ -2543,6 +2752,7 @@ export namespace Prisma {
    */
   export interface Prisma__EmpresaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    assinatura<T extends Empresa$assinaturaArgs<ExtArgs> = {}>(args?: Subset<T, Empresa$assinaturaArgs<ExtArgs>>): Prisma__AssinaturaClient<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     convites<T extends Empresa$convitesArgs<ExtArgs> = {}>(args?: Subset<T, Empresa$convitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     usuarios<T extends Empresa$usuariosArgs<ExtArgs> = {}>(args?: Subset<T, Empresa$usuariosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     produtos<T extends Empresa$produtosArgs<ExtArgs> = {}>(args?: Subset<T, Empresa$produtosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2551,6 +2761,7 @@ export namespace Prisma {
     fornecedores<T extends Empresa$fornecedoresArgs<ExtArgs> = {}>(args?: Subset<T, Empresa$fornecedoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FornecedorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     nfeImports<T extends Empresa$nfeImportsArgs<ExtArgs> = {}>(args?: Subset<T, Empresa$nfeImportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NfeImportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends Empresa$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, Empresa$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    pagamentos<T extends Empresa$pagamentosArgs<ExtArgs> = {}>(args?: Subset<T, Empresa$pagamentosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2582,7 +2793,8 @@ export namespace Prisma {
   interface EmpresaFieldRefs {
     readonly id: FieldRef<"Empresa", 'String'>
     readonly nome: FieldRef<"Empresa", 'String'>
-    readonly cnpj: FieldRef<"Empresa", 'String'>
+    readonly tipoDocumento: FieldRef<"Empresa", 'String'>
+    readonly documento: FieldRef<"Empresa", 'String'>
     readonly createdAt: FieldRef<"Empresa", 'DateTime'>
   }
     
@@ -2977,6 +3189,25 @@ export namespace Prisma {
   }
 
   /**
+   * Empresa.assinatura
+   */
+  export type Empresa$assinaturaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    where?: AssinaturaWhereInput
+  }
+
+  /**
    * Empresa.convites
    */
   export type Empresa$convitesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3169,6 +3400,30 @@ export namespace Prisma {
   }
 
   /**
+   * Empresa.pagamentos
+   */
+  export type Empresa$pagamentosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    where?: PagamentoSaasWhereInput
+    orderBy?: PagamentoSaasOrderByWithRelationInput | PagamentoSaasOrderByWithRelationInput[]
+    cursor?: PagamentoSaasWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PagamentoSaasScalarFieldEnum | PagamentoSaasScalarFieldEnum[]
+  }
+
+  /**
    * Empresa without action
    */
   export type EmpresaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3184,6 +3439,1121 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: EmpresaInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Assinatura
+   */
+
+  export type AggregateAssinatura = {
+    _count: AssinaturaCountAggregateOutputType | null
+    _min: AssinaturaMinAggregateOutputType | null
+    _max: AssinaturaMaxAggregateOutputType | null
+  }
+
+  export type AssinaturaMinAggregateOutputType = {
+    id: string | null
+    empresaId: string | null
+    status: string | null
+    plano: string | null
+    dataInicio: Date | null
+    dataVencimento: Date | null
+    dataCancelamento: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AssinaturaMaxAggregateOutputType = {
+    id: string | null
+    empresaId: string | null
+    status: string | null
+    plano: string | null
+    dataInicio: Date | null
+    dataVencimento: Date | null
+    dataCancelamento: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AssinaturaCountAggregateOutputType = {
+    id: number
+    empresaId: number
+    status: number
+    plano: number
+    dataInicio: number
+    dataVencimento: number
+    dataCancelamento: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AssinaturaMinAggregateInputType = {
+    id?: true
+    empresaId?: true
+    status?: true
+    plano?: true
+    dataInicio?: true
+    dataVencimento?: true
+    dataCancelamento?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AssinaturaMaxAggregateInputType = {
+    id?: true
+    empresaId?: true
+    status?: true
+    plano?: true
+    dataInicio?: true
+    dataVencimento?: true
+    dataCancelamento?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AssinaturaCountAggregateInputType = {
+    id?: true
+    empresaId?: true
+    status?: true
+    plano?: true
+    dataInicio?: true
+    dataVencimento?: true
+    dataCancelamento?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AssinaturaAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Assinatura to aggregate.
+     */
+    where?: AssinaturaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Assinaturas to fetch.
+     */
+    orderBy?: AssinaturaOrderByWithRelationInput | AssinaturaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AssinaturaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Assinaturas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Assinaturas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Assinaturas
+    **/
+    _count?: true | AssinaturaCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AssinaturaMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AssinaturaMaxAggregateInputType
+  }
+
+  export type GetAssinaturaAggregateType<T extends AssinaturaAggregateArgs> = {
+        [P in keyof T & keyof AggregateAssinatura]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAssinatura[P]>
+      : GetScalarType<T[P], AggregateAssinatura[P]>
+  }
+
+
+
+
+  export type AssinaturaGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AssinaturaWhereInput
+    orderBy?: AssinaturaOrderByWithAggregationInput | AssinaturaOrderByWithAggregationInput[]
+    by: AssinaturaScalarFieldEnum[] | AssinaturaScalarFieldEnum
+    having?: AssinaturaScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AssinaturaCountAggregateInputType | true
+    _min?: AssinaturaMinAggregateInputType
+    _max?: AssinaturaMaxAggregateInputType
+  }
+
+  export type AssinaturaGroupByOutputType = {
+    id: string
+    empresaId: string
+    status: string
+    plano: string
+    dataInicio: Date
+    dataVencimento: Date | null
+    dataCancelamento: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: AssinaturaCountAggregateOutputType | null
+    _min: AssinaturaMinAggregateOutputType | null
+    _max: AssinaturaMaxAggregateOutputType | null
+  }
+
+  type GetAssinaturaGroupByPayload<T extends AssinaturaGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AssinaturaGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AssinaturaGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AssinaturaGroupByOutputType[P]>
+            : GetScalarType<T[P], AssinaturaGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AssinaturaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    empresaId?: boolean
+    status?: boolean
+    plano?: boolean
+    dataInicio?: boolean
+    dataVencimento?: boolean
+    dataCancelamento?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["assinatura"]>
+
+  export type AssinaturaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    empresaId?: boolean
+    status?: boolean
+    plano?: boolean
+    dataInicio?: boolean
+    dataVencimento?: boolean
+    dataCancelamento?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["assinatura"]>
+
+  export type AssinaturaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    empresaId?: boolean
+    status?: boolean
+    plano?: boolean
+    dataInicio?: boolean
+    dataVencimento?: boolean
+    dataCancelamento?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["assinatura"]>
+
+  export type AssinaturaSelectScalar = {
+    id?: boolean
+    empresaId?: boolean
+    status?: boolean
+    plano?: boolean
+    dataInicio?: boolean
+    dataVencimento?: boolean
+    dataCancelamento?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AssinaturaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "empresaId" | "status" | "plano" | "dataInicio" | "dataVencimento" | "dataCancelamento" | "createdAt" | "updatedAt", ExtArgs["result"]["assinatura"]>
+  export type AssinaturaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }
+  export type AssinaturaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }
+  export type AssinaturaIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }
+
+  export type $AssinaturaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Assinatura"
+    objects: {
+      empresa: Prisma.$EmpresaPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      empresaId: string
+      status: string
+      plano: string
+      dataInicio: Date
+      dataVencimento: Date | null
+      dataCancelamento: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["assinatura"]>
+    composites: {}
+  }
+
+  type AssinaturaGetPayload<S extends boolean | null | undefined | AssinaturaDefaultArgs> = $Result.GetResult<Prisma.$AssinaturaPayload, S>
+
+  type AssinaturaCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AssinaturaFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AssinaturaCountAggregateInputType | true
+    }
+
+  export interface AssinaturaDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Assinatura'], meta: { name: 'Assinatura' } }
+    /**
+     * Find zero or one Assinatura that matches the filter.
+     * @param {AssinaturaFindUniqueArgs} args - Arguments to find a Assinatura
+     * @example
+     * // Get one Assinatura
+     * const assinatura = await prisma.assinatura.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AssinaturaFindUniqueArgs>(args: SelectSubset<T, AssinaturaFindUniqueArgs<ExtArgs>>): Prisma__AssinaturaClient<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Assinatura that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AssinaturaFindUniqueOrThrowArgs} args - Arguments to find a Assinatura
+     * @example
+     * // Get one Assinatura
+     * const assinatura = await prisma.assinatura.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AssinaturaFindUniqueOrThrowArgs>(args: SelectSubset<T, AssinaturaFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AssinaturaClient<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Assinatura that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssinaturaFindFirstArgs} args - Arguments to find a Assinatura
+     * @example
+     * // Get one Assinatura
+     * const assinatura = await prisma.assinatura.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AssinaturaFindFirstArgs>(args?: SelectSubset<T, AssinaturaFindFirstArgs<ExtArgs>>): Prisma__AssinaturaClient<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Assinatura that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssinaturaFindFirstOrThrowArgs} args - Arguments to find a Assinatura
+     * @example
+     * // Get one Assinatura
+     * const assinatura = await prisma.assinatura.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AssinaturaFindFirstOrThrowArgs>(args?: SelectSubset<T, AssinaturaFindFirstOrThrowArgs<ExtArgs>>): Prisma__AssinaturaClient<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Assinaturas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssinaturaFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Assinaturas
+     * const assinaturas = await prisma.assinatura.findMany()
+     * 
+     * // Get first 10 Assinaturas
+     * const assinaturas = await prisma.assinatura.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const assinaturaWithIdOnly = await prisma.assinatura.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AssinaturaFindManyArgs>(args?: SelectSubset<T, AssinaturaFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Assinatura.
+     * @param {AssinaturaCreateArgs} args - Arguments to create a Assinatura.
+     * @example
+     * // Create one Assinatura
+     * const Assinatura = await prisma.assinatura.create({
+     *   data: {
+     *     // ... data to create a Assinatura
+     *   }
+     * })
+     * 
+     */
+    create<T extends AssinaturaCreateArgs>(args: SelectSubset<T, AssinaturaCreateArgs<ExtArgs>>): Prisma__AssinaturaClient<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Assinaturas.
+     * @param {AssinaturaCreateManyArgs} args - Arguments to create many Assinaturas.
+     * @example
+     * // Create many Assinaturas
+     * const assinatura = await prisma.assinatura.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AssinaturaCreateManyArgs>(args?: SelectSubset<T, AssinaturaCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Assinaturas and returns the data saved in the database.
+     * @param {AssinaturaCreateManyAndReturnArgs} args - Arguments to create many Assinaturas.
+     * @example
+     * // Create many Assinaturas
+     * const assinatura = await prisma.assinatura.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Assinaturas and only return the `id`
+     * const assinaturaWithIdOnly = await prisma.assinatura.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AssinaturaCreateManyAndReturnArgs>(args?: SelectSubset<T, AssinaturaCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Assinatura.
+     * @param {AssinaturaDeleteArgs} args - Arguments to delete one Assinatura.
+     * @example
+     * // Delete one Assinatura
+     * const Assinatura = await prisma.assinatura.delete({
+     *   where: {
+     *     // ... filter to delete one Assinatura
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AssinaturaDeleteArgs>(args: SelectSubset<T, AssinaturaDeleteArgs<ExtArgs>>): Prisma__AssinaturaClient<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Assinatura.
+     * @param {AssinaturaUpdateArgs} args - Arguments to update one Assinatura.
+     * @example
+     * // Update one Assinatura
+     * const assinatura = await prisma.assinatura.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AssinaturaUpdateArgs>(args: SelectSubset<T, AssinaturaUpdateArgs<ExtArgs>>): Prisma__AssinaturaClient<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Assinaturas.
+     * @param {AssinaturaDeleteManyArgs} args - Arguments to filter Assinaturas to delete.
+     * @example
+     * // Delete a few Assinaturas
+     * const { count } = await prisma.assinatura.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AssinaturaDeleteManyArgs>(args?: SelectSubset<T, AssinaturaDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Assinaturas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssinaturaUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Assinaturas
+     * const assinatura = await prisma.assinatura.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AssinaturaUpdateManyArgs>(args: SelectSubset<T, AssinaturaUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Assinaturas and returns the data updated in the database.
+     * @param {AssinaturaUpdateManyAndReturnArgs} args - Arguments to update many Assinaturas.
+     * @example
+     * // Update many Assinaturas
+     * const assinatura = await prisma.assinatura.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Assinaturas and only return the `id`
+     * const assinaturaWithIdOnly = await prisma.assinatura.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AssinaturaUpdateManyAndReturnArgs>(args: SelectSubset<T, AssinaturaUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Assinatura.
+     * @param {AssinaturaUpsertArgs} args - Arguments to update or create a Assinatura.
+     * @example
+     * // Update or create a Assinatura
+     * const assinatura = await prisma.assinatura.upsert({
+     *   create: {
+     *     // ... data to create a Assinatura
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Assinatura we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AssinaturaUpsertArgs>(args: SelectSubset<T, AssinaturaUpsertArgs<ExtArgs>>): Prisma__AssinaturaClient<$Result.GetResult<Prisma.$AssinaturaPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Assinaturas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssinaturaCountArgs} args - Arguments to filter Assinaturas to count.
+     * @example
+     * // Count the number of Assinaturas
+     * const count = await prisma.assinatura.count({
+     *   where: {
+     *     // ... the filter for the Assinaturas we want to count
+     *   }
+     * })
+    **/
+    count<T extends AssinaturaCountArgs>(
+      args?: Subset<T, AssinaturaCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AssinaturaCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Assinatura.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssinaturaAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AssinaturaAggregateArgs>(args: Subset<T, AssinaturaAggregateArgs>): Prisma.PrismaPromise<GetAssinaturaAggregateType<T>>
+
+    /**
+     * Group by Assinatura.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssinaturaGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AssinaturaGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AssinaturaGroupByArgs['orderBy'] }
+        : { orderBy?: AssinaturaGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AssinaturaGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAssinaturaGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Assinatura model
+   */
+  readonly fields: AssinaturaFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Assinatura.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AssinaturaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    empresa<T extends EmpresaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EmpresaDefaultArgs<ExtArgs>>): Prisma__EmpresaClient<$Result.GetResult<Prisma.$EmpresaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Assinatura model
+   */
+  interface AssinaturaFieldRefs {
+    readonly id: FieldRef<"Assinatura", 'String'>
+    readonly empresaId: FieldRef<"Assinatura", 'String'>
+    readonly status: FieldRef<"Assinatura", 'String'>
+    readonly plano: FieldRef<"Assinatura", 'String'>
+    readonly dataInicio: FieldRef<"Assinatura", 'DateTime'>
+    readonly dataVencimento: FieldRef<"Assinatura", 'DateTime'>
+    readonly dataCancelamento: FieldRef<"Assinatura", 'DateTime'>
+    readonly createdAt: FieldRef<"Assinatura", 'DateTime'>
+    readonly updatedAt: FieldRef<"Assinatura", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Assinatura findUnique
+   */
+  export type AssinaturaFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    /**
+     * Filter, which Assinatura to fetch.
+     */
+    where: AssinaturaWhereUniqueInput
+  }
+
+  /**
+   * Assinatura findUniqueOrThrow
+   */
+  export type AssinaturaFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    /**
+     * Filter, which Assinatura to fetch.
+     */
+    where: AssinaturaWhereUniqueInput
+  }
+
+  /**
+   * Assinatura findFirst
+   */
+  export type AssinaturaFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    /**
+     * Filter, which Assinatura to fetch.
+     */
+    where?: AssinaturaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Assinaturas to fetch.
+     */
+    orderBy?: AssinaturaOrderByWithRelationInput | AssinaturaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Assinaturas.
+     */
+    cursor?: AssinaturaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Assinaturas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Assinaturas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Assinaturas.
+     */
+    distinct?: AssinaturaScalarFieldEnum | AssinaturaScalarFieldEnum[]
+  }
+
+  /**
+   * Assinatura findFirstOrThrow
+   */
+  export type AssinaturaFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    /**
+     * Filter, which Assinatura to fetch.
+     */
+    where?: AssinaturaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Assinaturas to fetch.
+     */
+    orderBy?: AssinaturaOrderByWithRelationInput | AssinaturaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Assinaturas.
+     */
+    cursor?: AssinaturaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Assinaturas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Assinaturas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Assinaturas.
+     */
+    distinct?: AssinaturaScalarFieldEnum | AssinaturaScalarFieldEnum[]
+  }
+
+  /**
+   * Assinatura findMany
+   */
+  export type AssinaturaFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    /**
+     * Filter, which Assinaturas to fetch.
+     */
+    where?: AssinaturaWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Assinaturas to fetch.
+     */
+    orderBy?: AssinaturaOrderByWithRelationInput | AssinaturaOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Assinaturas.
+     */
+    cursor?: AssinaturaWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Assinaturas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Assinaturas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Assinaturas.
+     */
+    distinct?: AssinaturaScalarFieldEnum | AssinaturaScalarFieldEnum[]
+  }
+
+  /**
+   * Assinatura create
+   */
+  export type AssinaturaCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Assinatura.
+     */
+    data: XOR<AssinaturaCreateInput, AssinaturaUncheckedCreateInput>
+  }
+
+  /**
+   * Assinatura createMany
+   */
+  export type AssinaturaCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Assinaturas.
+     */
+    data: AssinaturaCreateManyInput | AssinaturaCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Assinatura createManyAndReturn
+   */
+  export type AssinaturaCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * The data used to create many Assinaturas.
+     */
+    data: AssinaturaCreateManyInput | AssinaturaCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Assinatura update
+   */
+  export type AssinaturaUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Assinatura.
+     */
+    data: XOR<AssinaturaUpdateInput, AssinaturaUncheckedUpdateInput>
+    /**
+     * Choose, which Assinatura to update.
+     */
+    where: AssinaturaWhereUniqueInput
+  }
+
+  /**
+   * Assinatura updateMany
+   */
+  export type AssinaturaUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Assinaturas.
+     */
+    data: XOR<AssinaturaUpdateManyMutationInput, AssinaturaUncheckedUpdateManyInput>
+    /**
+     * Filter which Assinaturas to update
+     */
+    where?: AssinaturaWhereInput
+    /**
+     * Limit how many Assinaturas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Assinatura updateManyAndReturn
+   */
+  export type AssinaturaUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * The data used to update Assinaturas.
+     */
+    data: XOR<AssinaturaUpdateManyMutationInput, AssinaturaUncheckedUpdateManyInput>
+    /**
+     * Filter which Assinaturas to update
+     */
+    where?: AssinaturaWhereInput
+    /**
+     * Limit how many Assinaturas to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Assinatura upsert
+   */
+  export type AssinaturaUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Assinatura to update in case it exists.
+     */
+    where: AssinaturaWhereUniqueInput
+    /**
+     * In case the Assinatura found by the `where` argument doesn't exist, create a new Assinatura with this data.
+     */
+    create: XOR<AssinaturaCreateInput, AssinaturaUncheckedCreateInput>
+    /**
+     * In case the Assinatura was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AssinaturaUpdateInput, AssinaturaUncheckedUpdateInput>
+  }
+
+  /**
+   * Assinatura delete
+   */
+  export type AssinaturaDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
+    /**
+     * Filter which Assinatura to delete.
+     */
+    where: AssinaturaWhereUniqueInput
+  }
+
+  /**
+   * Assinatura deleteMany
+   */
+  export type AssinaturaDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Assinaturas to delete
+     */
+    where?: AssinaturaWhereInput
+    /**
+     * Limit how many Assinaturas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Assinatura without action
+   */
+  export type AssinaturaDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Assinatura
+     */
+    select?: AssinaturaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Assinatura
+     */
+    omit?: AssinaturaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssinaturaInclude<ExtArgs> | null
   }
 
 
@@ -13647,6 +15017,1142 @@ export namespace Prisma {
 
 
   /**
+   * Model PagamentoSaas
+   */
+
+  export type AggregatePagamentoSaas = {
+    _count: PagamentoSaasCountAggregateOutputType | null
+    _avg: PagamentoSaasAvgAggregateOutputType | null
+    _sum: PagamentoSaasSumAggregateOutputType | null
+    _min: PagamentoSaasMinAggregateOutputType | null
+    _max: PagamentoSaasMaxAggregateOutputType | null
+  }
+
+  export type PagamentoSaasAvgAggregateOutputType = {
+    valor: number | null
+  }
+
+  export type PagamentoSaasSumAggregateOutputType = {
+    valor: number | null
+  }
+
+  export type PagamentoSaasMinAggregateOutputType = {
+    id: string | null
+    empresaId: string | null
+    tipo: string | null
+    plano: string | null
+    valor: number | null
+    status: string | null
+    descricao: string | null
+    createdAt: Date | null
+  }
+
+  export type PagamentoSaasMaxAggregateOutputType = {
+    id: string | null
+    empresaId: string | null
+    tipo: string | null
+    plano: string | null
+    valor: number | null
+    status: string | null
+    descricao: string | null
+    createdAt: Date | null
+  }
+
+  export type PagamentoSaasCountAggregateOutputType = {
+    id: number
+    empresaId: number
+    tipo: number
+    plano: number
+    valor: number
+    status: number
+    descricao: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type PagamentoSaasAvgAggregateInputType = {
+    valor?: true
+  }
+
+  export type PagamentoSaasSumAggregateInputType = {
+    valor?: true
+  }
+
+  export type PagamentoSaasMinAggregateInputType = {
+    id?: true
+    empresaId?: true
+    tipo?: true
+    plano?: true
+    valor?: true
+    status?: true
+    descricao?: true
+    createdAt?: true
+  }
+
+  export type PagamentoSaasMaxAggregateInputType = {
+    id?: true
+    empresaId?: true
+    tipo?: true
+    plano?: true
+    valor?: true
+    status?: true
+    descricao?: true
+    createdAt?: true
+  }
+
+  export type PagamentoSaasCountAggregateInputType = {
+    id?: true
+    empresaId?: true
+    tipo?: true
+    plano?: true
+    valor?: true
+    status?: true
+    descricao?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type PagamentoSaasAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PagamentoSaas to aggregate.
+     */
+    where?: PagamentoSaasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PagamentoSaas to fetch.
+     */
+    orderBy?: PagamentoSaasOrderByWithRelationInput | PagamentoSaasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PagamentoSaasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PagamentoSaas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PagamentoSaas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PagamentoSaas
+    **/
+    _count?: true | PagamentoSaasCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PagamentoSaasAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PagamentoSaasSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PagamentoSaasMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PagamentoSaasMaxAggregateInputType
+  }
+
+  export type GetPagamentoSaasAggregateType<T extends PagamentoSaasAggregateArgs> = {
+        [P in keyof T & keyof AggregatePagamentoSaas]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePagamentoSaas[P]>
+      : GetScalarType<T[P], AggregatePagamentoSaas[P]>
+  }
+
+
+
+
+  export type PagamentoSaasGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PagamentoSaasWhereInput
+    orderBy?: PagamentoSaasOrderByWithAggregationInput | PagamentoSaasOrderByWithAggregationInput[]
+    by: PagamentoSaasScalarFieldEnum[] | PagamentoSaasScalarFieldEnum
+    having?: PagamentoSaasScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PagamentoSaasCountAggregateInputType | true
+    _avg?: PagamentoSaasAvgAggregateInputType
+    _sum?: PagamentoSaasSumAggregateInputType
+    _min?: PagamentoSaasMinAggregateInputType
+    _max?: PagamentoSaasMaxAggregateInputType
+  }
+
+  export type PagamentoSaasGroupByOutputType = {
+    id: string
+    empresaId: string
+    tipo: string
+    plano: string
+    valor: number
+    status: string
+    descricao: string | null
+    createdAt: Date
+    _count: PagamentoSaasCountAggregateOutputType | null
+    _avg: PagamentoSaasAvgAggregateOutputType | null
+    _sum: PagamentoSaasSumAggregateOutputType | null
+    _min: PagamentoSaasMinAggregateOutputType | null
+    _max: PagamentoSaasMaxAggregateOutputType | null
+  }
+
+  type GetPagamentoSaasGroupByPayload<T extends PagamentoSaasGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PagamentoSaasGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PagamentoSaasGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PagamentoSaasGroupByOutputType[P]>
+            : GetScalarType<T[P], PagamentoSaasGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PagamentoSaasSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    empresaId?: boolean
+    tipo?: boolean
+    plano?: boolean
+    valor?: boolean
+    status?: boolean
+    descricao?: boolean
+    createdAt?: boolean
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pagamentoSaas"]>
+
+  export type PagamentoSaasSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    empresaId?: boolean
+    tipo?: boolean
+    plano?: boolean
+    valor?: boolean
+    status?: boolean
+    descricao?: boolean
+    createdAt?: boolean
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pagamentoSaas"]>
+
+  export type PagamentoSaasSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    empresaId?: boolean
+    tipo?: boolean
+    plano?: boolean
+    valor?: boolean
+    status?: boolean
+    descricao?: boolean
+    createdAt?: boolean
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pagamentoSaas"]>
+
+  export type PagamentoSaasSelectScalar = {
+    id?: boolean
+    empresaId?: boolean
+    tipo?: boolean
+    plano?: boolean
+    valor?: boolean
+    status?: boolean
+    descricao?: boolean
+    createdAt?: boolean
+  }
+
+  export type PagamentoSaasOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "empresaId" | "tipo" | "plano" | "valor" | "status" | "descricao" | "createdAt", ExtArgs["result"]["pagamentoSaas"]>
+  export type PagamentoSaasInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }
+  export type PagamentoSaasIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }
+  export type PagamentoSaasIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    empresa?: boolean | EmpresaDefaultArgs<ExtArgs>
+  }
+
+  export type $PagamentoSaasPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PagamentoSaas"
+    objects: {
+      empresa: Prisma.$EmpresaPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      empresaId: string
+      tipo: string
+      plano: string
+      valor: number
+      status: string
+      descricao: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["pagamentoSaas"]>
+    composites: {}
+  }
+
+  type PagamentoSaasGetPayload<S extends boolean | null | undefined | PagamentoSaasDefaultArgs> = $Result.GetResult<Prisma.$PagamentoSaasPayload, S>
+
+  type PagamentoSaasCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PagamentoSaasFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PagamentoSaasCountAggregateInputType | true
+    }
+
+  export interface PagamentoSaasDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PagamentoSaas'], meta: { name: 'PagamentoSaas' } }
+    /**
+     * Find zero or one PagamentoSaas that matches the filter.
+     * @param {PagamentoSaasFindUniqueArgs} args - Arguments to find a PagamentoSaas
+     * @example
+     * // Get one PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PagamentoSaasFindUniqueArgs>(args: SelectSubset<T, PagamentoSaasFindUniqueArgs<ExtArgs>>): Prisma__PagamentoSaasClient<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PagamentoSaas that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PagamentoSaasFindUniqueOrThrowArgs} args - Arguments to find a PagamentoSaas
+     * @example
+     * // Get one PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PagamentoSaasFindUniqueOrThrowArgs>(args: SelectSubset<T, PagamentoSaasFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PagamentoSaasClient<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PagamentoSaas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PagamentoSaasFindFirstArgs} args - Arguments to find a PagamentoSaas
+     * @example
+     * // Get one PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PagamentoSaasFindFirstArgs>(args?: SelectSubset<T, PagamentoSaasFindFirstArgs<ExtArgs>>): Prisma__PagamentoSaasClient<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PagamentoSaas that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PagamentoSaasFindFirstOrThrowArgs} args - Arguments to find a PagamentoSaas
+     * @example
+     * // Get one PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PagamentoSaasFindFirstOrThrowArgs>(args?: SelectSubset<T, PagamentoSaasFindFirstOrThrowArgs<ExtArgs>>): Prisma__PagamentoSaasClient<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PagamentoSaas that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PagamentoSaasFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.findMany()
+     * 
+     * // Get first 10 PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pagamentoSaasWithIdOnly = await prisma.pagamentoSaas.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PagamentoSaasFindManyArgs>(args?: SelectSubset<T, PagamentoSaasFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PagamentoSaas.
+     * @param {PagamentoSaasCreateArgs} args - Arguments to create a PagamentoSaas.
+     * @example
+     * // Create one PagamentoSaas
+     * const PagamentoSaas = await prisma.pagamentoSaas.create({
+     *   data: {
+     *     // ... data to create a PagamentoSaas
+     *   }
+     * })
+     * 
+     */
+    create<T extends PagamentoSaasCreateArgs>(args: SelectSubset<T, PagamentoSaasCreateArgs<ExtArgs>>): Prisma__PagamentoSaasClient<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PagamentoSaas.
+     * @param {PagamentoSaasCreateManyArgs} args - Arguments to create many PagamentoSaas.
+     * @example
+     * // Create many PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PagamentoSaasCreateManyArgs>(args?: SelectSubset<T, PagamentoSaasCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PagamentoSaas and returns the data saved in the database.
+     * @param {PagamentoSaasCreateManyAndReturnArgs} args - Arguments to create many PagamentoSaas.
+     * @example
+     * // Create many PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PagamentoSaas and only return the `id`
+     * const pagamentoSaasWithIdOnly = await prisma.pagamentoSaas.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PagamentoSaasCreateManyAndReturnArgs>(args?: SelectSubset<T, PagamentoSaasCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PagamentoSaas.
+     * @param {PagamentoSaasDeleteArgs} args - Arguments to delete one PagamentoSaas.
+     * @example
+     * // Delete one PagamentoSaas
+     * const PagamentoSaas = await prisma.pagamentoSaas.delete({
+     *   where: {
+     *     // ... filter to delete one PagamentoSaas
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PagamentoSaasDeleteArgs>(args: SelectSubset<T, PagamentoSaasDeleteArgs<ExtArgs>>): Prisma__PagamentoSaasClient<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PagamentoSaas.
+     * @param {PagamentoSaasUpdateArgs} args - Arguments to update one PagamentoSaas.
+     * @example
+     * // Update one PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PagamentoSaasUpdateArgs>(args: SelectSubset<T, PagamentoSaasUpdateArgs<ExtArgs>>): Prisma__PagamentoSaasClient<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PagamentoSaas.
+     * @param {PagamentoSaasDeleteManyArgs} args - Arguments to filter PagamentoSaas to delete.
+     * @example
+     * // Delete a few PagamentoSaas
+     * const { count } = await prisma.pagamentoSaas.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PagamentoSaasDeleteManyArgs>(args?: SelectSubset<T, PagamentoSaasDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PagamentoSaas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PagamentoSaasUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PagamentoSaasUpdateManyArgs>(args: SelectSubset<T, PagamentoSaasUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PagamentoSaas and returns the data updated in the database.
+     * @param {PagamentoSaasUpdateManyAndReturnArgs} args - Arguments to update many PagamentoSaas.
+     * @example
+     * // Update many PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PagamentoSaas and only return the `id`
+     * const pagamentoSaasWithIdOnly = await prisma.pagamentoSaas.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PagamentoSaasUpdateManyAndReturnArgs>(args: SelectSubset<T, PagamentoSaasUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PagamentoSaas.
+     * @param {PagamentoSaasUpsertArgs} args - Arguments to update or create a PagamentoSaas.
+     * @example
+     * // Update or create a PagamentoSaas
+     * const pagamentoSaas = await prisma.pagamentoSaas.upsert({
+     *   create: {
+     *     // ... data to create a PagamentoSaas
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PagamentoSaas we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PagamentoSaasUpsertArgs>(args: SelectSubset<T, PagamentoSaasUpsertArgs<ExtArgs>>): Prisma__PagamentoSaasClient<$Result.GetResult<Prisma.$PagamentoSaasPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PagamentoSaas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PagamentoSaasCountArgs} args - Arguments to filter PagamentoSaas to count.
+     * @example
+     * // Count the number of PagamentoSaas
+     * const count = await prisma.pagamentoSaas.count({
+     *   where: {
+     *     // ... the filter for the PagamentoSaas we want to count
+     *   }
+     * })
+    **/
+    count<T extends PagamentoSaasCountArgs>(
+      args?: Subset<T, PagamentoSaasCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PagamentoSaasCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PagamentoSaas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PagamentoSaasAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PagamentoSaasAggregateArgs>(args: Subset<T, PagamentoSaasAggregateArgs>): Prisma.PrismaPromise<GetPagamentoSaasAggregateType<T>>
+
+    /**
+     * Group by PagamentoSaas.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PagamentoSaasGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PagamentoSaasGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PagamentoSaasGroupByArgs['orderBy'] }
+        : { orderBy?: PagamentoSaasGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PagamentoSaasGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPagamentoSaasGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PagamentoSaas model
+   */
+  readonly fields: PagamentoSaasFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PagamentoSaas.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PagamentoSaasClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    empresa<T extends EmpresaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EmpresaDefaultArgs<ExtArgs>>): Prisma__EmpresaClient<$Result.GetResult<Prisma.$EmpresaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PagamentoSaas model
+   */
+  interface PagamentoSaasFieldRefs {
+    readonly id: FieldRef<"PagamentoSaas", 'String'>
+    readonly empresaId: FieldRef<"PagamentoSaas", 'String'>
+    readonly tipo: FieldRef<"PagamentoSaas", 'String'>
+    readonly plano: FieldRef<"PagamentoSaas", 'String'>
+    readonly valor: FieldRef<"PagamentoSaas", 'Float'>
+    readonly status: FieldRef<"PagamentoSaas", 'String'>
+    readonly descricao: FieldRef<"PagamentoSaas", 'String'>
+    readonly createdAt: FieldRef<"PagamentoSaas", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PagamentoSaas findUnique
+   */
+  export type PagamentoSaasFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    /**
+     * Filter, which PagamentoSaas to fetch.
+     */
+    where: PagamentoSaasWhereUniqueInput
+  }
+
+  /**
+   * PagamentoSaas findUniqueOrThrow
+   */
+  export type PagamentoSaasFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    /**
+     * Filter, which PagamentoSaas to fetch.
+     */
+    where: PagamentoSaasWhereUniqueInput
+  }
+
+  /**
+   * PagamentoSaas findFirst
+   */
+  export type PagamentoSaasFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    /**
+     * Filter, which PagamentoSaas to fetch.
+     */
+    where?: PagamentoSaasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PagamentoSaas to fetch.
+     */
+    orderBy?: PagamentoSaasOrderByWithRelationInput | PagamentoSaasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PagamentoSaas.
+     */
+    cursor?: PagamentoSaasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PagamentoSaas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PagamentoSaas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PagamentoSaas.
+     */
+    distinct?: PagamentoSaasScalarFieldEnum | PagamentoSaasScalarFieldEnum[]
+  }
+
+  /**
+   * PagamentoSaas findFirstOrThrow
+   */
+  export type PagamentoSaasFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    /**
+     * Filter, which PagamentoSaas to fetch.
+     */
+    where?: PagamentoSaasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PagamentoSaas to fetch.
+     */
+    orderBy?: PagamentoSaasOrderByWithRelationInput | PagamentoSaasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PagamentoSaas.
+     */
+    cursor?: PagamentoSaasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PagamentoSaas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PagamentoSaas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PagamentoSaas.
+     */
+    distinct?: PagamentoSaasScalarFieldEnum | PagamentoSaasScalarFieldEnum[]
+  }
+
+  /**
+   * PagamentoSaas findMany
+   */
+  export type PagamentoSaasFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    /**
+     * Filter, which PagamentoSaas to fetch.
+     */
+    where?: PagamentoSaasWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PagamentoSaas to fetch.
+     */
+    orderBy?: PagamentoSaasOrderByWithRelationInput | PagamentoSaasOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PagamentoSaas.
+     */
+    cursor?: PagamentoSaasWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PagamentoSaas from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PagamentoSaas.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PagamentoSaas.
+     */
+    distinct?: PagamentoSaasScalarFieldEnum | PagamentoSaasScalarFieldEnum[]
+  }
+
+  /**
+   * PagamentoSaas create
+   */
+  export type PagamentoSaasCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PagamentoSaas.
+     */
+    data: XOR<PagamentoSaasCreateInput, PagamentoSaasUncheckedCreateInput>
+  }
+
+  /**
+   * PagamentoSaas createMany
+   */
+  export type PagamentoSaasCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PagamentoSaas.
+     */
+    data: PagamentoSaasCreateManyInput | PagamentoSaasCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PagamentoSaas createManyAndReturn
+   */
+  export type PagamentoSaasCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * The data used to create many PagamentoSaas.
+     */
+    data: PagamentoSaasCreateManyInput | PagamentoSaasCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PagamentoSaas update
+   */
+  export type PagamentoSaasUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PagamentoSaas.
+     */
+    data: XOR<PagamentoSaasUpdateInput, PagamentoSaasUncheckedUpdateInput>
+    /**
+     * Choose, which PagamentoSaas to update.
+     */
+    where: PagamentoSaasWhereUniqueInput
+  }
+
+  /**
+   * PagamentoSaas updateMany
+   */
+  export type PagamentoSaasUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PagamentoSaas.
+     */
+    data: XOR<PagamentoSaasUpdateManyMutationInput, PagamentoSaasUncheckedUpdateManyInput>
+    /**
+     * Filter which PagamentoSaas to update
+     */
+    where?: PagamentoSaasWhereInput
+    /**
+     * Limit how many PagamentoSaas to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PagamentoSaas updateManyAndReturn
+   */
+  export type PagamentoSaasUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * The data used to update PagamentoSaas.
+     */
+    data: XOR<PagamentoSaasUpdateManyMutationInput, PagamentoSaasUncheckedUpdateManyInput>
+    /**
+     * Filter which PagamentoSaas to update
+     */
+    where?: PagamentoSaasWhereInput
+    /**
+     * Limit how many PagamentoSaas to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PagamentoSaas upsert
+   */
+  export type PagamentoSaasUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PagamentoSaas to update in case it exists.
+     */
+    where: PagamentoSaasWhereUniqueInput
+    /**
+     * In case the PagamentoSaas found by the `where` argument doesn't exist, create a new PagamentoSaas with this data.
+     */
+    create: XOR<PagamentoSaasCreateInput, PagamentoSaasUncheckedCreateInput>
+    /**
+     * In case the PagamentoSaas was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PagamentoSaasUpdateInput, PagamentoSaasUncheckedUpdateInput>
+  }
+
+  /**
+   * PagamentoSaas delete
+   */
+  export type PagamentoSaasDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+    /**
+     * Filter which PagamentoSaas to delete.
+     */
+    where: PagamentoSaasWhereUniqueInput
+  }
+
+  /**
+   * PagamentoSaas deleteMany
+   */
+  export type PagamentoSaasDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PagamentoSaas to delete
+     */
+    where?: PagamentoSaasWhereInput
+    /**
+     * Limit how many PagamentoSaas to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PagamentoSaas without action
+   */
+  export type PagamentoSaasDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PagamentoSaas
+     */
+    select?: PagamentoSaasSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PagamentoSaas
+     */
+    omit?: PagamentoSaasOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PagamentoSaasInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -13663,11 +16169,27 @@ export namespace Prisma {
   export const EmpresaScalarFieldEnum: {
     id: 'id',
     nome: 'nome',
-    cnpj: 'cnpj',
+    tipoDocumento: 'tipoDocumento',
+    documento: 'documento',
     createdAt: 'createdAt'
   };
 
   export type EmpresaScalarFieldEnum = (typeof EmpresaScalarFieldEnum)[keyof typeof EmpresaScalarFieldEnum]
+
+
+  export const AssinaturaScalarFieldEnum: {
+    id: 'id',
+    empresaId: 'empresaId',
+    status: 'status',
+    plano: 'plano',
+    dataInicio: 'dataInicio',
+    dataVencimento: 'dataVencimento',
+    dataCancelamento: 'dataCancelamento',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AssinaturaScalarFieldEnum = (typeof AssinaturaScalarFieldEnum)[keyof typeof AssinaturaScalarFieldEnum]
 
 
   export const UserScalarFieldEnum: {
@@ -13801,6 +16323,20 @@ export namespace Prisma {
   export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
 
 
+  export const PagamentoSaasScalarFieldEnum: {
+    id: 'id',
+    empresaId: 'empresaId',
+    tipo: 'tipo',
+    plano: 'plano',
+    valor: 'valor',
+    status: 'status',
+    descricao: 'descricao',
+    createdAt: 'createdAt'
+  };
+
+  export type PagamentoSaasScalarFieldEnum = (typeof PagamentoSaasScalarFieldEnum)[keyof typeof PagamentoSaasScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -13895,8 +16431,10 @@ export namespace Prisma {
     NOT?: EmpresaWhereInput | EmpresaWhereInput[]
     id?: StringFilter<"Empresa"> | string
     nome?: StringFilter<"Empresa"> | string
-    cnpj?: StringNullableFilter<"Empresa"> | string | null
+    tipoDocumento?: StringNullableFilter<"Empresa"> | string | null
+    documento?: StringNullableFilter<"Empresa"> | string | null
     createdAt?: DateTimeFilter<"Empresa"> | Date | string
+    assinatura?: XOR<AssinaturaNullableScalarRelationFilter, AssinaturaWhereInput> | null
     convites?: UserInviteListRelationFilter
     usuarios?: UserListRelationFilter
     produtos?: ProductListRelationFilter
@@ -13905,13 +16443,16 @@ export namespace Prisma {
     fornecedores?: FornecedorListRelationFilter
     nfeImports?: NfeImportListRelationFilter
     auditLogs?: AuditLogListRelationFilter
+    pagamentos?: PagamentoSaasListRelationFilter
   }
 
   export type EmpresaOrderByWithRelationInput = {
     id?: SortOrder
     nome?: SortOrder
-    cnpj?: SortOrderInput | SortOrder
+    tipoDocumento?: SortOrderInput | SortOrder
+    documento?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    assinatura?: AssinaturaOrderByWithRelationInput
     convites?: UserInviteOrderByRelationAggregateInput
     usuarios?: UserOrderByRelationAggregateInput
     produtos?: ProductOrderByRelationAggregateInput
@@ -13920,16 +16461,19 @@ export namespace Prisma {
     fornecedores?: FornecedorOrderByRelationAggregateInput
     nfeImports?: NfeImportOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
+    pagamentos?: PagamentoSaasOrderByRelationAggregateInput
   }
 
   export type EmpresaWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    cnpj?: string
+    documento?: string
     AND?: EmpresaWhereInput | EmpresaWhereInput[]
     OR?: EmpresaWhereInput[]
     NOT?: EmpresaWhereInput | EmpresaWhereInput[]
     nome?: StringFilter<"Empresa"> | string
+    tipoDocumento?: StringNullableFilter<"Empresa"> | string | null
     createdAt?: DateTimeFilter<"Empresa"> | Date | string
+    assinatura?: XOR<AssinaturaNullableScalarRelationFilter, AssinaturaWhereInput> | null
     convites?: UserInviteListRelationFilter
     usuarios?: UserListRelationFilter
     produtos?: ProductListRelationFilter
@@ -13938,12 +16482,14 @@ export namespace Prisma {
     fornecedores?: FornecedorListRelationFilter
     nfeImports?: NfeImportListRelationFilter
     auditLogs?: AuditLogListRelationFilter
-  }, "id" | "cnpj">
+    pagamentos?: PagamentoSaasListRelationFilter
+  }, "id" | "documento">
 
   export type EmpresaOrderByWithAggregationInput = {
     id?: SortOrder
     nome?: SortOrder
-    cnpj?: SortOrderInput | SortOrder
+    tipoDocumento?: SortOrderInput | SortOrder
+    documento?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: EmpresaCountOrderByAggregateInput
     _max?: EmpresaMaxOrderByAggregateInput
@@ -13956,8 +16502,84 @@ export namespace Prisma {
     NOT?: EmpresaScalarWhereWithAggregatesInput | EmpresaScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Empresa"> | string
     nome?: StringWithAggregatesFilter<"Empresa"> | string
-    cnpj?: StringNullableWithAggregatesFilter<"Empresa"> | string | null
+    tipoDocumento?: StringNullableWithAggregatesFilter<"Empresa"> | string | null
+    documento?: StringNullableWithAggregatesFilter<"Empresa"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Empresa"> | Date | string
+  }
+
+  export type AssinaturaWhereInput = {
+    AND?: AssinaturaWhereInput | AssinaturaWhereInput[]
+    OR?: AssinaturaWhereInput[]
+    NOT?: AssinaturaWhereInput | AssinaturaWhereInput[]
+    id?: StringFilter<"Assinatura"> | string
+    empresaId?: StringFilter<"Assinatura"> | string
+    status?: StringFilter<"Assinatura"> | string
+    plano?: StringFilter<"Assinatura"> | string
+    dataInicio?: DateTimeFilter<"Assinatura"> | Date | string
+    dataVencimento?: DateTimeNullableFilter<"Assinatura"> | Date | string | null
+    dataCancelamento?: DateTimeNullableFilter<"Assinatura"> | Date | string | null
+    createdAt?: DateTimeFilter<"Assinatura"> | Date | string
+    updatedAt?: DateTimeFilter<"Assinatura"> | Date | string
+    empresa?: XOR<EmpresaScalarRelationFilter, EmpresaWhereInput>
+  }
+
+  export type AssinaturaOrderByWithRelationInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    status?: SortOrder
+    plano?: SortOrder
+    dataInicio?: SortOrder
+    dataVencimento?: SortOrderInput | SortOrder
+    dataCancelamento?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    empresa?: EmpresaOrderByWithRelationInput
+  }
+
+  export type AssinaturaWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    empresaId?: string
+    AND?: AssinaturaWhereInput | AssinaturaWhereInput[]
+    OR?: AssinaturaWhereInput[]
+    NOT?: AssinaturaWhereInput | AssinaturaWhereInput[]
+    status?: StringFilter<"Assinatura"> | string
+    plano?: StringFilter<"Assinatura"> | string
+    dataInicio?: DateTimeFilter<"Assinatura"> | Date | string
+    dataVencimento?: DateTimeNullableFilter<"Assinatura"> | Date | string | null
+    dataCancelamento?: DateTimeNullableFilter<"Assinatura"> | Date | string | null
+    createdAt?: DateTimeFilter<"Assinatura"> | Date | string
+    updatedAt?: DateTimeFilter<"Assinatura"> | Date | string
+    empresa?: XOR<EmpresaScalarRelationFilter, EmpresaWhereInput>
+  }, "id" | "empresaId">
+
+  export type AssinaturaOrderByWithAggregationInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    status?: SortOrder
+    plano?: SortOrder
+    dataInicio?: SortOrder
+    dataVencimento?: SortOrderInput | SortOrder
+    dataCancelamento?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AssinaturaCountOrderByAggregateInput
+    _max?: AssinaturaMaxOrderByAggregateInput
+    _min?: AssinaturaMinOrderByAggregateInput
+  }
+
+  export type AssinaturaScalarWhereWithAggregatesInput = {
+    AND?: AssinaturaScalarWhereWithAggregatesInput | AssinaturaScalarWhereWithAggregatesInput[]
+    OR?: AssinaturaScalarWhereWithAggregatesInput[]
+    NOT?: AssinaturaScalarWhereWithAggregatesInput | AssinaturaScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Assinatura"> | string
+    empresaId?: StringWithAggregatesFilter<"Assinatura"> | string
+    status?: StringWithAggregatesFilter<"Assinatura"> | string
+    plano?: StringWithAggregatesFilter<"Assinatura"> | string
+    dataInicio?: DateTimeWithAggregatesFilter<"Assinatura"> | Date | string
+    dataVencimento?: DateTimeNullableWithAggregatesFilter<"Assinatura"> | Date | string | null
+    dataCancelamento?: DateTimeNullableWithAggregatesFilter<"Assinatura"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Assinatura"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Assinatura"> | Date | string
   }
 
   export type UserWhereInput = {
@@ -14669,11 +17291,85 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
   }
 
+  export type PagamentoSaasWhereInput = {
+    AND?: PagamentoSaasWhereInput | PagamentoSaasWhereInput[]
+    OR?: PagamentoSaasWhereInput[]
+    NOT?: PagamentoSaasWhereInput | PagamentoSaasWhereInput[]
+    id?: StringFilter<"PagamentoSaas"> | string
+    empresaId?: StringFilter<"PagamentoSaas"> | string
+    tipo?: StringFilter<"PagamentoSaas"> | string
+    plano?: StringFilter<"PagamentoSaas"> | string
+    valor?: FloatFilter<"PagamentoSaas"> | number
+    status?: StringFilter<"PagamentoSaas"> | string
+    descricao?: StringNullableFilter<"PagamentoSaas"> | string | null
+    createdAt?: DateTimeFilter<"PagamentoSaas"> | Date | string
+    empresa?: XOR<EmpresaScalarRelationFilter, EmpresaWhereInput>
+  }
+
+  export type PagamentoSaasOrderByWithRelationInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    tipo?: SortOrder
+    plano?: SortOrder
+    valor?: SortOrder
+    status?: SortOrder
+    descricao?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    empresa?: EmpresaOrderByWithRelationInput
+  }
+
+  export type PagamentoSaasWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PagamentoSaasWhereInput | PagamentoSaasWhereInput[]
+    OR?: PagamentoSaasWhereInput[]
+    NOT?: PagamentoSaasWhereInput | PagamentoSaasWhereInput[]
+    empresaId?: StringFilter<"PagamentoSaas"> | string
+    tipo?: StringFilter<"PagamentoSaas"> | string
+    plano?: StringFilter<"PagamentoSaas"> | string
+    valor?: FloatFilter<"PagamentoSaas"> | number
+    status?: StringFilter<"PagamentoSaas"> | string
+    descricao?: StringNullableFilter<"PagamentoSaas"> | string | null
+    createdAt?: DateTimeFilter<"PagamentoSaas"> | Date | string
+    empresa?: XOR<EmpresaScalarRelationFilter, EmpresaWhereInput>
+  }, "id">
+
+  export type PagamentoSaasOrderByWithAggregationInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    tipo?: SortOrder
+    plano?: SortOrder
+    valor?: SortOrder
+    status?: SortOrder
+    descricao?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: PagamentoSaasCountOrderByAggregateInput
+    _avg?: PagamentoSaasAvgOrderByAggregateInput
+    _max?: PagamentoSaasMaxOrderByAggregateInput
+    _min?: PagamentoSaasMinOrderByAggregateInput
+    _sum?: PagamentoSaasSumOrderByAggregateInput
+  }
+
+  export type PagamentoSaasScalarWhereWithAggregatesInput = {
+    AND?: PagamentoSaasScalarWhereWithAggregatesInput | PagamentoSaasScalarWhereWithAggregatesInput[]
+    OR?: PagamentoSaasScalarWhereWithAggregatesInput[]
+    NOT?: PagamentoSaasScalarWhereWithAggregatesInput | PagamentoSaasScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PagamentoSaas"> | string
+    empresaId?: StringWithAggregatesFilter<"PagamentoSaas"> | string
+    tipo?: StringWithAggregatesFilter<"PagamentoSaas"> | string
+    plano?: StringWithAggregatesFilter<"PagamentoSaas"> | string
+    valor?: FloatWithAggregatesFilter<"PagamentoSaas"> | number
+    status?: StringWithAggregatesFilter<"PagamentoSaas"> | string
+    descricao?: StringNullableWithAggregatesFilter<"PagamentoSaas"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"PagamentoSaas"> | Date | string
+  }
+
   export type EmpresaCreateInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteCreateNestedManyWithoutEmpresaInput
     usuarios?: UserCreateNestedManyWithoutEmpresaInput
     produtos?: ProductCreateNestedManyWithoutEmpresaInput
@@ -14682,13 +17378,16 @@ export namespace Prisma {
     fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUncheckedCreateInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
     usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
     produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
@@ -14697,13 +17396,16 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUpdateManyWithoutEmpresaNestedInput
@@ -14712,13 +17414,16 @@ export namespace Prisma {
     fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
@@ -14727,27 +17432,114 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaCreateManyInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
   }
 
   export type EmpresaUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type EmpresaUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssinaturaCreateInput = {
+    id?: string
+    status?: string
+    plano?: string
+    dataInicio?: Date | string
+    dataVencimento?: Date | string | null
+    dataCancelamento?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    empresa: EmpresaCreateNestedOneWithoutAssinaturaInput
+  }
+
+  export type AssinaturaUncheckedCreateInput = {
+    id?: string
+    empresaId: string
+    status?: string
+    plano?: string
+    dataInicio?: Date | string
+    dataVencimento?: Date | string | null
+    dataCancelamento?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AssinaturaUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    dataInicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataVencimento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dataCancelamento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    empresa?: EmpresaUpdateOneRequiredWithoutAssinaturaNestedInput
+  }
+
+  export type AssinaturaUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    empresaId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    dataInicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataVencimento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dataCancelamento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssinaturaCreateManyInput = {
+    id?: string
+    empresaId: string
+    status?: string
+    plano?: string
+    dataInicio?: Date | string
+    dataVencimento?: Date | string | null
+    dataCancelamento?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AssinaturaUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    dataInicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataVencimento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dataCancelamento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssinaturaUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    empresaId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    dataInicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataVencimento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dataCancelamento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateInput = {
@@ -15491,6 +18283,82 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PagamentoSaasCreateInput = {
+    id?: string
+    tipo: string
+    plano: string
+    valor: number
+    status?: string
+    descricao?: string | null
+    createdAt?: Date | string
+    empresa: EmpresaCreateNestedOneWithoutPagamentosInput
+  }
+
+  export type PagamentoSaasUncheckedCreateInput = {
+    id?: string
+    empresaId: string
+    tipo: string
+    plano: string
+    valor: number
+    status?: string
+    descricao?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PagamentoSaasUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    valor?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    empresa?: EmpresaUpdateOneRequiredWithoutPagamentosNestedInput
+  }
+
+  export type PagamentoSaasUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    empresaId?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    valor?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PagamentoSaasCreateManyInput = {
+    id?: string
+    empresaId: string
+    tipo: string
+    plano: string
+    valor: number
+    status?: string
+    descricao?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PagamentoSaasUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    valor?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PagamentoSaasUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    empresaId?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    valor?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -15530,6 +18398,11 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type AssinaturaNullableScalarRelationFilter = {
+    is?: AssinaturaWhereInput | null
+    isNot?: AssinaturaWhereInput | null
   }
 
   export type UserInviteListRelationFilter = {
@@ -15580,6 +18453,12 @@ export namespace Prisma {
     none?: AuditLogWhereInput
   }
 
+  export type PagamentoSaasListRelationFilter = {
+    every?: PagamentoSaasWhereInput
+    some?: PagamentoSaasWhereInput
+    none?: PagamentoSaasWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -15617,24 +18496,31 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type PagamentoSaasOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type EmpresaCountOrderByAggregateInput = {
     id?: SortOrder
     nome?: SortOrder
-    cnpj?: SortOrder
+    tipoDocumento?: SortOrder
+    documento?: SortOrder
     createdAt?: SortOrder
   }
 
   export type EmpresaMaxOrderByAggregateInput = {
     id?: SortOrder
     nome?: SortOrder
-    cnpj?: SortOrder
+    tipoDocumento?: SortOrder
+    documento?: SortOrder
     createdAt?: SortOrder
   }
 
   export type EmpresaMinOrderByAggregateInput = {
     id?: SortOrder
     nome?: SortOrder
-    cnpj?: SortOrder
+    tipoDocumento?: SortOrder
+    documento?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -15688,9 +18574,70 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type EmpresaScalarRelationFilter = {
     is?: EmpresaWhereInput
     isNot?: EmpresaWhereInput
+  }
+
+  export type AssinaturaCountOrderByAggregateInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    status?: SortOrder
+    plano?: SortOrder
+    dataInicio?: SortOrder
+    dataVencimento?: SortOrder
+    dataCancelamento?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AssinaturaMaxOrderByAggregateInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    status?: SortOrder
+    plano?: SortOrder
+    dataInicio?: SortOrder
+    dataVencimento?: SortOrder
+    dataCancelamento?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AssinaturaMinOrderByAggregateInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    status?: SortOrder
+    plano?: SortOrder
+    dataInicio?: SortOrder
+    dataVencimento?: SortOrder
+    dataCancelamento?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type UserEmpresaIdEmailCompoundUniqueInput = {
@@ -15973,17 +18920,6 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type FornecedorNullableScalarRelationFilter = {
     is?: FornecedorWhereInput | null
     isNot?: FornecedorWhereInput | null
@@ -16045,20 +18981,6 @@ export namespace Prisma {
 
   export type NfeImportSumOrderByAggregateInput = {
     valorTotal?: SortOrder
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NfeImportScalarRelationFilter = {
@@ -16192,6 +19114,53 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type PagamentoSaasCountOrderByAggregateInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    tipo?: SortOrder
+    plano?: SortOrder
+    valor?: SortOrder
+    status?: SortOrder
+    descricao?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PagamentoSaasAvgOrderByAggregateInput = {
+    valor?: SortOrder
+  }
+
+  export type PagamentoSaasMaxOrderByAggregateInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    tipo?: SortOrder
+    plano?: SortOrder
+    valor?: SortOrder
+    status?: SortOrder
+    descricao?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PagamentoSaasMinOrderByAggregateInput = {
+    id?: SortOrder
+    empresaId?: SortOrder
+    tipo?: SortOrder
+    plano?: SortOrder
+    valor?: SortOrder
+    status?: SortOrder
+    descricao?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PagamentoSaasSumOrderByAggregateInput = {
+    valor?: SortOrder
+  }
+
+  export type AssinaturaCreateNestedOneWithoutEmpresaInput = {
+    create?: XOR<AssinaturaCreateWithoutEmpresaInput, AssinaturaUncheckedCreateWithoutEmpresaInput>
+    connectOrCreate?: AssinaturaCreateOrConnectWithoutEmpresaInput
+    connect?: AssinaturaWhereUniqueInput
+  }
+
   export type UserInviteCreateNestedManyWithoutEmpresaInput = {
     create?: XOR<UserInviteCreateWithoutEmpresaInput, UserInviteUncheckedCreateWithoutEmpresaInput> | UserInviteCreateWithoutEmpresaInput[] | UserInviteUncheckedCreateWithoutEmpresaInput[]
     connectOrCreate?: UserInviteCreateOrConnectWithoutEmpresaInput | UserInviteCreateOrConnectWithoutEmpresaInput[]
@@ -16246,6 +19215,19 @@ export namespace Prisma {
     connectOrCreate?: AuditLogCreateOrConnectWithoutEmpresaInput | AuditLogCreateOrConnectWithoutEmpresaInput[]
     createMany?: AuditLogCreateManyEmpresaInputEnvelope
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  }
+
+  export type PagamentoSaasCreateNestedManyWithoutEmpresaInput = {
+    create?: XOR<PagamentoSaasCreateWithoutEmpresaInput, PagamentoSaasUncheckedCreateWithoutEmpresaInput> | PagamentoSaasCreateWithoutEmpresaInput[] | PagamentoSaasUncheckedCreateWithoutEmpresaInput[]
+    connectOrCreate?: PagamentoSaasCreateOrConnectWithoutEmpresaInput | PagamentoSaasCreateOrConnectWithoutEmpresaInput[]
+    createMany?: PagamentoSaasCreateManyEmpresaInputEnvelope
+    connect?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+  }
+
+  export type AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput = {
+    create?: XOR<AssinaturaCreateWithoutEmpresaInput, AssinaturaUncheckedCreateWithoutEmpresaInput>
+    connectOrCreate?: AssinaturaCreateOrConnectWithoutEmpresaInput
+    connect?: AssinaturaWhereUniqueInput
   }
 
   export type UserInviteUncheckedCreateNestedManyWithoutEmpresaInput = {
@@ -16304,6 +19286,13 @@ export namespace Prisma {
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
+  export type PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput = {
+    create?: XOR<PagamentoSaasCreateWithoutEmpresaInput, PagamentoSaasUncheckedCreateWithoutEmpresaInput> | PagamentoSaasCreateWithoutEmpresaInput[] | PagamentoSaasUncheckedCreateWithoutEmpresaInput[]
+    connectOrCreate?: PagamentoSaasCreateOrConnectWithoutEmpresaInput | PagamentoSaasCreateOrConnectWithoutEmpresaInput[]
+    createMany?: PagamentoSaasCreateManyEmpresaInputEnvelope
+    connect?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -16314,6 +19303,16 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type AssinaturaUpdateOneWithoutEmpresaNestedInput = {
+    create?: XOR<AssinaturaCreateWithoutEmpresaInput, AssinaturaUncheckedCreateWithoutEmpresaInput>
+    connectOrCreate?: AssinaturaCreateOrConnectWithoutEmpresaInput
+    upsert?: AssinaturaUpsertWithoutEmpresaInput
+    disconnect?: AssinaturaWhereInput | boolean
+    delete?: AssinaturaWhereInput | boolean
+    connect?: AssinaturaWhereUniqueInput
+    update?: XOR<XOR<AssinaturaUpdateToOneWithWhereWithoutEmpresaInput, AssinaturaUpdateWithoutEmpresaInput>, AssinaturaUncheckedUpdateWithoutEmpresaInput>
   }
 
   export type UserInviteUpdateManyWithoutEmpresaNestedInput = {
@@ -16428,6 +19427,30 @@ export namespace Prisma {
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
+  export type PagamentoSaasUpdateManyWithoutEmpresaNestedInput = {
+    create?: XOR<PagamentoSaasCreateWithoutEmpresaInput, PagamentoSaasUncheckedCreateWithoutEmpresaInput> | PagamentoSaasCreateWithoutEmpresaInput[] | PagamentoSaasUncheckedCreateWithoutEmpresaInput[]
+    connectOrCreate?: PagamentoSaasCreateOrConnectWithoutEmpresaInput | PagamentoSaasCreateOrConnectWithoutEmpresaInput[]
+    upsert?: PagamentoSaasUpsertWithWhereUniqueWithoutEmpresaInput | PagamentoSaasUpsertWithWhereUniqueWithoutEmpresaInput[]
+    createMany?: PagamentoSaasCreateManyEmpresaInputEnvelope
+    set?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+    disconnect?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+    delete?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+    connect?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+    update?: PagamentoSaasUpdateWithWhereUniqueWithoutEmpresaInput | PagamentoSaasUpdateWithWhereUniqueWithoutEmpresaInput[]
+    updateMany?: PagamentoSaasUpdateManyWithWhereWithoutEmpresaInput | PagamentoSaasUpdateManyWithWhereWithoutEmpresaInput[]
+    deleteMany?: PagamentoSaasScalarWhereInput | PagamentoSaasScalarWhereInput[]
+  }
+
+  export type AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput = {
+    create?: XOR<AssinaturaCreateWithoutEmpresaInput, AssinaturaUncheckedCreateWithoutEmpresaInput>
+    connectOrCreate?: AssinaturaCreateOrConnectWithoutEmpresaInput
+    upsert?: AssinaturaUpsertWithoutEmpresaInput
+    disconnect?: AssinaturaWhereInput | boolean
+    delete?: AssinaturaWhereInput | boolean
+    connect?: AssinaturaWhereUniqueInput
+    update?: XOR<XOR<AssinaturaUpdateToOneWithWhereWithoutEmpresaInput, AssinaturaUpdateWithoutEmpresaInput>, AssinaturaUncheckedUpdateWithoutEmpresaInput>
+  }
+
   export type UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput = {
     create?: XOR<UserInviteCreateWithoutEmpresaInput, UserInviteUncheckedCreateWithoutEmpresaInput> | UserInviteCreateWithoutEmpresaInput[] | UserInviteUncheckedCreateWithoutEmpresaInput[]
     connectOrCreate?: UserInviteCreateOrConnectWithoutEmpresaInput | UserInviteCreateOrConnectWithoutEmpresaInput[]
@@ -16538,6 +19561,38 @@ export namespace Prisma {
     update?: AuditLogUpdateWithWhereUniqueWithoutEmpresaInput | AuditLogUpdateWithWhereUniqueWithoutEmpresaInput[]
     updateMany?: AuditLogUpdateManyWithWhereWithoutEmpresaInput | AuditLogUpdateManyWithWhereWithoutEmpresaInput[]
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+  }
+
+  export type PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput = {
+    create?: XOR<PagamentoSaasCreateWithoutEmpresaInput, PagamentoSaasUncheckedCreateWithoutEmpresaInput> | PagamentoSaasCreateWithoutEmpresaInput[] | PagamentoSaasUncheckedCreateWithoutEmpresaInput[]
+    connectOrCreate?: PagamentoSaasCreateOrConnectWithoutEmpresaInput | PagamentoSaasCreateOrConnectWithoutEmpresaInput[]
+    upsert?: PagamentoSaasUpsertWithWhereUniqueWithoutEmpresaInput | PagamentoSaasUpsertWithWhereUniqueWithoutEmpresaInput[]
+    createMany?: PagamentoSaasCreateManyEmpresaInputEnvelope
+    set?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+    disconnect?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+    delete?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+    connect?: PagamentoSaasWhereUniqueInput | PagamentoSaasWhereUniqueInput[]
+    update?: PagamentoSaasUpdateWithWhereUniqueWithoutEmpresaInput | PagamentoSaasUpdateWithWhereUniqueWithoutEmpresaInput[]
+    updateMany?: PagamentoSaasUpdateManyWithWhereWithoutEmpresaInput | PagamentoSaasUpdateManyWithWhereWithoutEmpresaInput[]
+    deleteMany?: PagamentoSaasScalarWhereInput | PagamentoSaasScalarWhereInput[]
+  }
+
+  export type EmpresaCreateNestedOneWithoutAssinaturaInput = {
+    create?: XOR<EmpresaCreateWithoutAssinaturaInput, EmpresaUncheckedCreateWithoutAssinaturaInput>
+    connectOrCreate?: EmpresaCreateOrConnectWithoutAssinaturaInput
+    connect?: EmpresaWhereUniqueInput
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type EmpresaUpdateOneRequiredWithoutAssinaturaNestedInput = {
+    create?: XOR<EmpresaCreateWithoutAssinaturaInput, EmpresaUncheckedCreateWithoutAssinaturaInput>
+    connectOrCreate?: EmpresaCreateOrConnectWithoutAssinaturaInput
+    upsert?: EmpresaUpsertWithoutAssinaturaInput
+    connect?: EmpresaWhereUniqueInput
+    update?: XOR<XOR<EmpresaUpdateToOneWithWhereWithoutAssinaturaInput, EmpresaUpdateWithoutAssinaturaInput>, EmpresaUncheckedUpdateWithoutAssinaturaInput>
   }
 
   export type EmpresaCreateNestedOneWithoutUsuariosInput = {
@@ -16946,10 +20001,6 @@ export namespace Prisma {
     connect?: NfeImportItemWhereUniqueInput | NfeImportItemWhereUniqueInput[]
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
   export type EmpresaUpdateOneRequiredWithoutNfeImportsNestedInput = {
     create?: XOR<EmpresaCreateWithoutNfeImportsInput, EmpresaUncheckedCreateWithoutNfeImportsInput>
     connectOrCreate?: EmpresaCreateOrConnectWithoutNfeImportsInput
@@ -17068,6 +20119,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuditLogsInput, UserUpdateWithoutAuditLogsInput>, UserUncheckedUpdateWithoutAuditLogsInput>
   }
 
+  export type EmpresaCreateNestedOneWithoutPagamentosInput = {
+    create?: XOR<EmpresaCreateWithoutPagamentosInput, EmpresaUncheckedCreateWithoutPagamentosInput>
+    connectOrCreate?: EmpresaCreateOrConnectWithoutPagamentosInput
+    connect?: EmpresaWhereUniqueInput
+  }
+
+  export type EmpresaUpdateOneRequiredWithoutPagamentosNestedInput = {
+    create?: XOR<EmpresaCreateWithoutPagamentosInput, EmpresaUncheckedCreateWithoutPagamentosInput>
+    connectOrCreate?: EmpresaCreateOrConnectWithoutPagamentosInput
+    upsert?: EmpresaUpsertWithoutPagamentosInput
+    connect?: EmpresaWhereUniqueInput
+    update?: XOR<XOR<EmpresaUpdateToOneWithWhereWithoutPagamentosInput, EmpresaUpdateWithoutPagamentosInput>, EmpresaUncheckedUpdateWithoutPagamentosInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -17177,6 +20242,31 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type NestedFloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
     in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
@@ -17231,29 +20321,31 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  export type AssinaturaCreateWithoutEmpresaInput = {
+    id?: string
+    status?: string
+    plano?: string
+    dataInicio?: Date | string
+    dataVencimento?: Date | string | null
+    dataCancelamento?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  export type AssinaturaUncheckedCreateWithoutEmpresaInput = {
+    id?: string
+    status?: string
+    plano?: string
+    dataInicio?: Date | string
+    dataVencimento?: Date | string | null
+    dataCancelamento?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AssinaturaCreateOrConnectWithoutEmpresaInput = {
+    where: AssinaturaWhereUniqueInput
+    create: XOR<AssinaturaCreateWithoutEmpresaInput, AssinaturaUncheckedCreateWithoutEmpresaInput>
   }
 
   export type UserInviteCreateWithoutEmpresaInput = {
@@ -17514,6 +20606,69 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PagamentoSaasCreateWithoutEmpresaInput = {
+    id?: string
+    tipo: string
+    plano: string
+    valor: number
+    status?: string
+    descricao?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PagamentoSaasUncheckedCreateWithoutEmpresaInput = {
+    id?: string
+    tipo: string
+    plano: string
+    valor: number
+    status?: string
+    descricao?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PagamentoSaasCreateOrConnectWithoutEmpresaInput = {
+    where: PagamentoSaasWhereUniqueInput
+    create: XOR<PagamentoSaasCreateWithoutEmpresaInput, PagamentoSaasUncheckedCreateWithoutEmpresaInput>
+  }
+
+  export type PagamentoSaasCreateManyEmpresaInputEnvelope = {
+    data: PagamentoSaasCreateManyEmpresaInput | PagamentoSaasCreateManyEmpresaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AssinaturaUpsertWithoutEmpresaInput = {
+    update: XOR<AssinaturaUpdateWithoutEmpresaInput, AssinaturaUncheckedUpdateWithoutEmpresaInput>
+    create: XOR<AssinaturaCreateWithoutEmpresaInput, AssinaturaUncheckedCreateWithoutEmpresaInput>
+    where?: AssinaturaWhereInput
+  }
+
+  export type AssinaturaUpdateToOneWithWhereWithoutEmpresaInput = {
+    where?: AssinaturaWhereInput
+    data: XOR<AssinaturaUpdateWithoutEmpresaInput, AssinaturaUncheckedUpdateWithoutEmpresaInput>
+  }
+
+  export type AssinaturaUpdateWithoutEmpresaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    dataInicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataVencimento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dataCancelamento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssinaturaUncheckedUpdateWithoutEmpresaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    dataInicio?: DateTimeFieldUpdateOperationsInput | Date | string
+    dataVencimento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dataCancelamento?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserInviteUpsertWithWhereUniqueWithoutEmpresaInput = {
     where: UserInviteWhereUniqueInput
     update: XOR<UserInviteUpdateWithoutEmpresaInput, UserInviteUncheckedUpdateWithoutEmpresaInput>
@@ -17756,11 +20911,127 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"AuditLog"> | Date | string
   }
 
+  export type PagamentoSaasUpsertWithWhereUniqueWithoutEmpresaInput = {
+    where: PagamentoSaasWhereUniqueInput
+    update: XOR<PagamentoSaasUpdateWithoutEmpresaInput, PagamentoSaasUncheckedUpdateWithoutEmpresaInput>
+    create: XOR<PagamentoSaasCreateWithoutEmpresaInput, PagamentoSaasUncheckedCreateWithoutEmpresaInput>
+  }
+
+  export type PagamentoSaasUpdateWithWhereUniqueWithoutEmpresaInput = {
+    where: PagamentoSaasWhereUniqueInput
+    data: XOR<PagamentoSaasUpdateWithoutEmpresaInput, PagamentoSaasUncheckedUpdateWithoutEmpresaInput>
+  }
+
+  export type PagamentoSaasUpdateManyWithWhereWithoutEmpresaInput = {
+    where: PagamentoSaasScalarWhereInput
+    data: XOR<PagamentoSaasUpdateManyMutationInput, PagamentoSaasUncheckedUpdateManyWithoutEmpresaInput>
+  }
+
+  export type PagamentoSaasScalarWhereInput = {
+    AND?: PagamentoSaasScalarWhereInput | PagamentoSaasScalarWhereInput[]
+    OR?: PagamentoSaasScalarWhereInput[]
+    NOT?: PagamentoSaasScalarWhereInput | PagamentoSaasScalarWhereInput[]
+    id?: StringFilter<"PagamentoSaas"> | string
+    empresaId?: StringFilter<"PagamentoSaas"> | string
+    tipo?: StringFilter<"PagamentoSaas"> | string
+    plano?: StringFilter<"PagamentoSaas"> | string
+    valor?: FloatFilter<"PagamentoSaas"> | number
+    status?: StringFilter<"PagamentoSaas"> | string
+    descricao?: StringNullableFilter<"PagamentoSaas"> | string | null
+    createdAt?: DateTimeFilter<"PagamentoSaas"> | Date | string
+  }
+
+  export type EmpresaCreateWithoutAssinaturaInput = {
+    id?: string
+    nome: string
+    tipoDocumento?: string | null
+    documento?: string | null
+    createdAt?: Date | string
+    convites?: UserInviteCreateNestedManyWithoutEmpresaInput
+    usuarios?: UserCreateNestedManyWithoutEmpresaInput
+    produtos?: ProductCreateNestedManyWithoutEmpresaInput
+    movimentacoes?: StockMovementCreateNestedManyWithoutEmpresaInput
+    solicitacoes?: SolicitacaoCreateNestedManyWithoutEmpresaInput
+    fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
+    nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
+    auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
+  }
+
+  export type EmpresaUncheckedCreateWithoutAssinaturaInput = {
+    id?: string
+    nome: string
+    tipoDocumento?: string | null
+    documento?: string | null
+    createdAt?: Date | string
+    convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
+    usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
+    produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
+    movimentacoes?: StockMovementUncheckedCreateNestedManyWithoutEmpresaInput
+    solicitacoes?: SolicitacaoUncheckedCreateNestedManyWithoutEmpresaInput
+    fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
+    nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
+  }
+
+  export type EmpresaCreateOrConnectWithoutAssinaturaInput = {
+    where: EmpresaWhereUniqueInput
+    create: XOR<EmpresaCreateWithoutAssinaturaInput, EmpresaUncheckedCreateWithoutAssinaturaInput>
+  }
+
+  export type EmpresaUpsertWithoutAssinaturaInput = {
+    update: XOR<EmpresaUpdateWithoutAssinaturaInput, EmpresaUncheckedUpdateWithoutAssinaturaInput>
+    create: XOR<EmpresaCreateWithoutAssinaturaInput, EmpresaUncheckedCreateWithoutAssinaturaInput>
+    where?: EmpresaWhereInput
+  }
+
+  export type EmpresaUpdateToOneWithWhereWithoutAssinaturaInput = {
+    where?: EmpresaWhereInput
+    data: XOR<EmpresaUpdateWithoutAssinaturaInput, EmpresaUncheckedUpdateWithoutAssinaturaInput>
+  }
+
+  export type EmpresaUpdateWithoutAssinaturaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
+    usuarios?: UserUpdateManyWithoutEmpresaNestedInput
+    produtos?: ProductUpdateManyWithoutEmpresaNestedInput
+    movimentacoes?: StockMovementUpdateManyWithoutEmpresaNestedInput
+    solicitacoes?: SolicitacaoUpdateManyWithoutEmpresaNestedInput
+    fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
+    nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
+  }
+
+  export type EmpresaUncheckedUpdateWithoutAssinaturaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
+    usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
+    produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
+    movimentacoes?: StockMovementUncheckedUpdateManyWithoutEmpresaNestedInput
+    solicitacoes?: SolicitacaoUncheckedUpdateManyWithoutEmpresaNestedInput
+    fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
+    nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
+  }
+
   export type EmpresaCreateWithoutUsuariosInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteCreateNestedManyWithoutEmpresaInput
     produtos?: ProductCreateNestedManyWithoutEmpresaInput
     movimentacoes?: StockMovementCreateNestedManyWithoutEmpresaInput
@@ -17768,13 +21039,16 @@ export namespace Prisma {
     fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUncheckedCreateWithoutUsuariosInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
     produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
     movimentacoes?: StockMovementUncheckedCreateNestedManyWithoutEmpresaInput
@@ -17782,6 +21056,7 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaCreateOrConnectWithoutUsuariosInput = {
@@ -17861,8 +21136,10 @@ export namespace Prisma {
   export type EmpresaUpdateWithoutUsuariosInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUpdateManyWithoutEmpresaNestedInput
     movimentacoes?: StockMovementUpdateManyWithoutEmpresaNestedInput
@@ -17870,13 +21147,16 @@ export namespace Prisma {
     fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaUncheckedUpdateWithoutUsuariosInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
     movimentacoes?: StockMovementUncheckedUpdateManyWithoutEmpresaNestedInput
@@ -17884,6 +21164,7 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type SolicitacaoUpsertWithWhereUniqueWithoutUserInput = {
@@ -17921,8 +21202,10 @@ export namespace Prisma {
   export type EmpresaCreateWithoutProdutosInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteCreateNestedManyWithoutEmpresaInput
     usuarios?: UserCreateNestedManyWithoutEmpresaInput
     movimentacoes?: StockMovementCreateNestedManyWithoutEmpresaInput
@@ -17930,13 +21213,16 @@ export namespace Prisma {
     fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUncheckedCreateWithoutProdutosInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
     usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
     movimentacoes?: StockMovementUncheckedCreateNestedManyWithoutEmpresaInput
@@ -17944,6 +21230,7 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaCreateOrConnectWithoutProdutosInput = {
@@ -18057,8 +21344,10 @@ export namespace Prisma {
   export type EmpresaUpdateWithoutProdutosInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUpdateManyWithoutEmpresaNestedInput
     movimentacoes?: StockMovementUpdateManyWithoutEmpresaNestedInput
@@ -18066,13 +21355,16 @@ export namespace Prisma {
     fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaUncheckedUpdateWithoutProdutosInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
     movimentacoes?: StockMovementUncheckedUpdateManyWithoutEmpresaNestedInput
@@ -18080,6 +21372,7 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type StockMovementUpsertWithWhereUniqueWithoutProductInput = {
@@ -18150,8 +21443,10 @@ export namespace Prisma {
   export type EmpresaCreateWithoutMovimentacoesInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteCreateNestedManyWithoutEmpresaInput
     usuarios?: UserCreateNestedManyWithoutEmpresaInput
     produtos?: ProductCreateNestedManyWithoutEmpresaInput
@@ -18159,13 +21454,16 @@ export namespace Prisma {
     fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUncheckedCreateWithoutMovimentacoesInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
     usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
     produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
@@ -18173,6 +21471,7 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaCreateOrConnectWithoutMovimentacoesInput = {
@@ -18231,8 +21530,10 @@ export namespace Prisma {
   export type EmpresaUpdateWithoutMovimentacoesInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUpdateManyWithoutEmpresaNestedInput
@@ -18240,13 +21541,16 @@ export namespace Prisma {
     fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaUncheckedUpdateWithoutMovimentacoesInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
@@ -18254,6 +21558,7 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type ProductUpsertWithoutMovementsInput = {
@@ -18302,8 +21607,10 @@ export namespace Prisma {
   export type EmpresaCreateWithoutSolicitacoesInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteCreateNestedManyWithoutEmpresaInput
     usuarios?: UserCreateNestedManyWithoutEmpresaInput
     produtos?: ProductCreateNestedManyWithoutEmpresaInput
@@ -18311,13 +21618,16 @@ export namespace Prisma {
     fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUncheckedCreateWithoutSolicitacoesInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
     usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
     produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
@@ -18325,6 +21635,7 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaCreateOrConnectWithoutSolicitacoesInput = {
@@ -18410,8 +21721,10 @@ export namespace Prisma {
   export type EmpresaUpdateWithoutSolicitacoesInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUpdateManyWithoutEmpresaNestedInput
@@ -18419,13 +21732,16 @@ export namespace Prisma {
     fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaUncheckedUpdateWithoutSolicitacoesInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
@@ -18433,6 +21749,7 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type UserUpsertWithoutSolicitacoesInput = {
@@ -18514,8 +21831,10 @@ export namespace Prisma {
   export type EmpresaCreateWithoutFornecedoresInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteCreateNestedManyWithoutEmpresaInput
     usuarios?: UserCreateNestedManyWithoutEmpresaInput
     produtos?: ProductCreateNestedManyWithoutEmpresaInput
@@ -18523,13 +21842,16 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUncheckedCreateWithoutFornecedoresInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
     usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
     produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
@@ -18537,6 +21859,7 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoUncheckedCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaCreateOrConnectWithoutFornecedoresInput = {
@@ -18598,8 +21921,10 @@ export namespace Prisma {
   export type EmpresaUpdateWithoutFornecedoresInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUpdateManyWithoutEmpresaNestedInput
@@ -18607,13 +21932,16 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaUncheckedUpdateWithoutFornecedoresInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
@@ -18621,6 +21949,7 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoUncheckedUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type NfeImportUpsertWithWhereUniqueWithoutFornecedorRefInput = {
@@ -18642,8 +21971,10 @@ export namespace Prisma {
   export type EmpresaCreateWithoutNfeImportsInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteCreateNestedManyWithoutEmpresaInput
     usuarios?: UserCreateNestedManyWithoutEmpresaInput
     produtos?: ProductCreateNestedManyWithoutEmpresaInput
@@ -18651,13 +21982,16 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoCreateNestedManyWithoutEmpresaInput
     fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUncheckedCreateWithoutNfeImportsInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
     usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
     produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
@@ -18665,6 +21999,7 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoUncheckedCreateNestedManyWithoutEmpresaInput
     fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaCreateOrConnectWithoutNfeImportsInput = {
@@ -18743,8 +22078,10 @@ export namespace Prisma {
   export type EmpresaUpdateWithoutNfeImportsInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUpdateManyWithoutEmpresaNestedInput
@@ -18752,13 +22089,16 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoUpdateManyWithoutEmpresaNestedInput
     fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaUncheckedUpdateWithoutNfeImportsInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
@@ -18766,6 +22106,7 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoUncheckedUpdateManyWithoutEmpresaNestedInput
     fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type FornecedorUpsertWithoutNotasFiscaisInput = {
@@ -18970,8 +22311,10 @@ export namespace Prisma {
   export type EmpresaCreateWithoutConvitesInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
     usuarios?: UserCreateNestedManyWithoutEmpresaInput
     produtos?: ProductCreateNestedManyWithoutEmpresaInput
     movimentacoes?: StockMovementCreateNestedManyWithoutEmpresaInput
@@ -18979,13 +22322,16 @@ export namespace Prisma {
     fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUncheckedCreateWithoutConvitesInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
     usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
     produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
     movimentacoes?: StockMovementUncheckedCreateNestedManyWithoutEmpresaInput
@@ -18993,6 +22339,7 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaCreateOrConnectWithoutConvitesInput = {
@@ -19014,8 +22361,10 @@ export namespace Prisma {
   export type EmpresaUpdateWithoutConvitesInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
     usuarios?: UserUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUpdateManyWithoutEmpresaNestedInput
     movimentacoes?: StockMovementUpdateManyWithoutEmpresaNestedInput
@@ -19023,13 +22372,16 @@ export namespace Prisma {
     fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaUncheckedUpdateWithoutConvitesInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
     usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
     movimentacoes?: StockMovementUncheckedUpdateManyWithoutEmpresaNestedInput
@@ -19037,13 +22389,16 @@ export namespace Prisma {
     fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaCreateWithoutAuditLogsInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteCreateNestedManyWithoutEmpresaInput
     usuarios?: UserCreateNestedManyWithoutEmpresaInput
     produtos?: ProductCreateNestedManyWithoutEmpresaInput
@@ -19051,13 +22406,16 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoCreateNestedManyWithoutEmpresaInput
     fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaUncheckedCreateWithoutAuditLogsInput = {
     id?: string
     nome: string
-    cnpj?: string | null
+    tipoDocumento?: string | null
+    documento?: string | null
     createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
     convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
     usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
     produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
@@ -19065,6 +22423,7 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoUncheckedCreateNestedManyWithoutEmpresaInput
     fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
     nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
+    pagamentos?: PagamentoSaasUncheckedCreateNestedManyWithoutEmpresaInput
   }
 
   export type EmpresaCreateOrConnectWithoutAuditLogsInput = {
@@ -19113,8 +22472,10 @@ export namespace Prisma {
   export type EmpresaUpdateWithoutAuditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUpdateManyWithoutEmpresaNestedInput
@@ -19122,13 +22483,16 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoUpdateManyWithoutEmpresaNestedInput
     fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUpdateManyWithoutEmpresaNestedInput
   }
 
   export type EmpresaUncheckedUpdateWithoutAuditLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     nome?: StringFieldUpdateOperationsInput | string
-    cnpj?: NullableStringFieldUpdateOperationsInput | string | null
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
     convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
     usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
     produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
@@ -19136,6 +22500,7 @@ export namespace Prisma {
     solicitacoes?: SolicitacaoUncheckedUpdateManyWithoutEmpresaNestedInput
     fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
     nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
+    pagamentos?: PagamentoSaasUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type UserUpsertWithoutAuditLogsInput = {
@@ -19169,6 +22534,90 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     solicitacoes?: SolicitacaoUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type EmpresaCreateWithoutPagamentosInput = {
+    id?: string
+    nome: string
+    tipoDocumento?: string | null
+    documento?: string | null
+    createdAt?: Date | string
+    assinatura?: AssinaturaCreateNestedOneWithoutEmpresaInput
+    convites?: UserInviteCreateNestedManyWithoutEmpresaInput
+    usuarios?: UserCreateNestedManyWithoutEmpresaInput
+    produtos?: ProductCreateNestedManyWithoutEmpresaInput
+    movimentacoes?: StockMovementCreateNestedManyWithoutEmpresaInput
+    solicitacoes?: SolicitacaoCreateNestedManyWithoutEmpresaInput
+    fornecedores?: FornecedorCreateNestedManyWithoutEmpresaInput
+    nfeImports?: NfeImportCreateNestedManyWithoutEmpresaInput
+    auditLogs?: AuditLogCreateNestedManyWithoutEmpresaInput
+  }
+
+  export type EmpresaUncheckedCreateWithoutPagamentosInput = {
+    id?: string
+    nome: string
+    tipoDocumento?: string | null
+    documento?: string | null
+    createdAt?: Date | string
+    assinatura?: AssinaturaUncheckedCreateNestedOneWithoutEmpresaInput
+    convites?: UserInviteUncheckedCreateNestedManyWithoutEmpresaInput
+    usuarios?: UserUncheckedCreateNestedManyWithoutEmpresaInput
+    produtos?: ProductUncheckedCreateNestedManyWithoutEmpresaInput
+    movimentacoes?: StockMovementUncheckedCreateNestedManyWithoutEmpresaInput
+    solicitacoes?: SolicitacaoUncheckedCreateNestedManyWithoutEmpresaInput
+    fornecedores?: FornecedorUncheckedCreateNestedManyWithoutEmpresaInput
+    nfeImports?: NfeImportUncheckedCreateNestedManyWithoutEmpresaInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutEmpresaInput
+  }
+
+  export type EmpresaCreateOrConnectWithoutPagamentosInput = {
+    where: EmpresaWhereUniqueInput
+    create: XOR<EmpresaCreateWithoutPagamentosInput, EmpresaUncheckedCreateWithoutPagamentosInput>
+  }
+
+  export type EmpresaUpsertWithoutPagamentosInput = {
+    update: XOR<EmpresaUpdateWithoutPagamentosInput, EmpresaUncheckedUpdateWithoutPagamentosInput>
+    create: XOR<EmpresaCreateWithoutPagamentosInput, EmpresaUncheckedCreateWithoutPagamentosInput>
+    where?: EmpresaWhereInput
+  }
+
+  export type EmpresaUpdateToOneWithWhereWithoutPagamentosInput = {
+    where?: EmpresaWhereInput
+    data: XOR<EmpresaUpdateWithoutPagamentosInput, EmpresaUncheckedUpdateWithoutPagamentosInput>
+  }
+
+  export type EmpresaUpdateWithoutPagamentosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUpdateOneWithoutEmpresaNestedInput
+    convites?: UserInviteUpdateManyWithoutEmpresaNestedInput
+    usuarios?: UserUpdateManyWithoutEmpresaNestedInput
+    produtos?: ProductUpdateManyWithoutEmpresaNestedInput
+    movimentacoes?: StockMovementUpdateManyWithoutEmpresaNestedInput
+    solicitacoes?: SolicitacaoUpdateManyWithoutEmpresaNestedInput
+    fornecedores?: FornecedorUpdateManyWithoutEmpresaNestedInput
+    nfeImports?: NfeImportUpdateManyWithoutEmpresaNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutEmpresaNestedInput
+  }
+
+  export type EmpresaUncheckedUpdateWithoutPagamentosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nome?: StringFieldUpdateOperationsInput | string
+    tipoDocumento?: NullableStringFieldUpdateOperationsInput | string | null
+    documento?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assinatura?: AssinaturaUncheckedUpdateOneWithoutEmpresaNestedInput
+    convites?: UserInviteUncheckedUpdateManyWithoutEmpresaNestedInput
+    usuarios?: UserUncheckedUpdateManyWithoutEmpresaNestedInput
+    produtos?: ProductUncheckedUpdateManyWithoutEmpresaNestedInput
+    movimentacoes?: StockMovementUncheckedUpdateManyWithoutEmpresaNestedInput
+    solicitacoes?: SolicitacaoUncheckedUpdateManyWithoutEmpresaNestedInput
+    fornecedores?: FornecedorUncheckedUpdateManyWithoutEmpresaNestedInput
+    nfeImports?: NfeImportUncheckedUpdateManyWithoutEmpresaNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutEmpresaNestedInput
   }
 
   export type UserInviteCreateManyEmpresaInput = {
@@ -19249,6 +22698,16 @@ export namespace Prisma {
     acao: string
     entidade: string
     entidadeId?: string | null
+    descricao?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PagamentoSaasCreateManyEmpresaInput = {
+    id?: string
+    tipo: string
+    plano: string
+    valor: number
+    status?: string
     descricao?: string | null
     createdAt?: Date | string
   }
@@ -19509,6 +22968,36 @@ export namespace Prisma {
     acao?: StringFieldUpdateOperationsInput | string
     entidade?: StringFieldUpdateOperationsInput | string
     entidadeId?: NullableStringFieldUpdateOperationsInput | string | null
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PagamentoSaasUpdateWithoutEmpresaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    valor?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PagamentoSaasUncheckedUpdateWithoutEmpresaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    valor?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    descricao?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PagamentoSaasUncheckedUpdateManyWithoutEmpresaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tipo?: StringFieldUpdateOperationsInput | string
+    plano?: StringFieldUpdateOperationsInput | string
+    valor?: FloatFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
     descricao?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

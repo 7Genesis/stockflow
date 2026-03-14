@@ -123,8 +123,21 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.EmpresaScalarFieldEnum = {
   id: 'id',
   nome: 'nome',
-  cnpj: 'cnpj',
+  tipoDocumento: 'tipoDocumento',
+  documento: 'documento',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.AssinaturaScalarFieldEnum = {
+  id: 'id',
+  empresaId: 'empresaId',
+  status: 'status',
+  plano: 'plano',
+  dataInicio: 'dataInicio',
+  dataVencimento: 'dataVencimento',
+  dataCancelamento: 'dataCancelamento',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
@@ -231,6 +244,17 @@ exports.Prisma.AuditLogScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.PagamentoSaasScalarFieldEnum = {
+  id: 'id',
+  empresaId: 'empresaId',
+  tipo: 'tipo',
+  plano: 'plano',
+  valor: 'valor',
+  status: 'status',
+  descricao: 'descricao',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -249,6 +273,7 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   Empresa: 'Empresa',
+  Assinatura: 'Assinatura',
   User: 'User',
   Product: 'Product',
   StockMovement: 'StockMovement',
@@ -257,7 +282,8 @@ exports.Prisma.ModelName = {
   NfeImport: 'NfeImport',
   NfeImportItem: 'NfeImportItem',
   UserInvite: 'UserInvite',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  PagamentoSaas: 'PagamentoSaas'
 };
 
 /**

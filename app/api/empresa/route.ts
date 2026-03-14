@@ -4,6 +4,24 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+function onlyDigits(value: string | undefined | null) {
+  return String(value ?? "").replace(/\D/g, "");
+}
+
+function identificarTipoDocumento(documento: string) {
+  const valor = onlyDigits(documento);
+
+  if (valor.length === 11) {
+    return "cpf" as const;
+  }
+
+  if (valor.length === 14) {
+    return "cnpj" as const;
+  }
+
+  return null;
+}
+
 export async function GET() {
   try {
     const usuario = await getSessionUser();
@@ -22,7 +40,8 @@ export async function GET() {
       select: {
         id: true,
         nome: true,
-        cnpj: true,
+        tipoDocumento: true,
+        documento: true,
         createdAt: true,
         _count: {
           select: {
@@ -75,7 +94,10 @@ export async function PUT(req: Request) {
     const body = await req.json();
 
     const nome = String(body.nome ?? "").trim();
-    const cnpj = String(body.cnpj ?? "").replace(/\D/g, "");
+    const documento = onlyDigits(body.documento);
+    const tipoDocumento = documento
+      ? identificarTipoDocumento(documento)
+      : null;
 
     if (!nome) {
       return NextResponse.json(
@@ -84,10 +106,17 @@ export async function PUT(req: Request) {
       );
     }
 
-    if (cnpj) {
-      const empresaComMesmoCnpj = await prisma.empresa.findFirst({
+    if (documento && !tipoDocumento) {
+      return NextResponse.json(
+        { error: "Documento deve ser um CPF ou CNPJ válido em formato." },
+        { status: 400 }
+      );
+    }
+
+    if (documento) {
+      const empresaComMesmoDocumento = await prisma.empresa.findFirst({
         where: {
-          cnpj,
+          documento,
           NOT: {
             id: usuario.empresaId,
           },
@@ -97,9 +126,9 @@ export async function PUT(req: Request) {
         },
       });
 
-      if (empresaComMesmoCnpj) {
+      if (empresaComMesmoDocumento) {
         return NextResponse.json(
-          { error: "Já existe outra empresa com esse CNPJ" },
+          { error: "Já existe outra empresa com esse documento" },
           { status: 400 }
         );
       }
@@ -111,12 +140,14 @@ export async function PUT(req: Request) {
       },
       data: {
         nome,
-        cnpj: cnpj || null,
+        tipoDocumento,
+        documento: documento || null,
       },
       select: {
         id: true,
         nome: true,
-        cnpj: true,
+        tipoDocumento: true,
+        documento: true,
         createdAt: true,
         _count: {
           select: {

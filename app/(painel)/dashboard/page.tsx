@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   BarChart,
   Bar,
@@ -71,6 +72,8 @@ type DashboardData = {
 };
 
 export default function DashboardPage() {
+  const router = useRouter();
+
   const [dados, setDados] = useState<DashboardData | null>(null);
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(true);
@@ -150,7 +153,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-zinc-900">Dashboard</h1>
           <p className="mt-1 text-sm text-zinc-500">
@@ -158,12 +161,21 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <button
-          onClick={carregarDashboard}
-          className="rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
-        >
-          Atualizar
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => router.push("/dashboard/minha-assinatura")}
+            className="rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
+          >
+            Minha assinatura
+          </button>
+
+          <button
+            onClick={carregarDashboard}
+            className="rounded-xl border border-zinc-300 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50"
+          >
+            Atualizar
+          </button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
