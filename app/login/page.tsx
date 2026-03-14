@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 type SessionUser = {
@@ -12,7 +12,7 @@ type SessionUser = {
   empresaId: string;
 };
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -83,17 +83,17 @@ export default function LoginPage() {
     return "";
   }
 
- function mensagemSucesso() {
-  if (sucesso === "senha-redefinida") {
-    return "Senha redefinida com sucesso. Agora você já pode entrar no sistema.";
-  }
+  function mensagemSucesso() {
+    if (sucesso === "senha-redefinida") {
+      return "Senha redefinida com sucesso. Agora você já pode entrar no sistema.";
+    }
 
-  if (sucesso === "convite-aceito") {
-    return "Convite aceito com sucesso. Agora você já pode entrar no sistema.";
-  }
+    if (sucesso === "convite-aceito") {
+      return "Convite aceito com sucesso. Agora você já pode entrar no sistema.";
+    }
 
-  return "";
-}
+    return "";
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
@@ -183,5 +183,21 @@ export default function LoginPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-zinc-100 px-4">
+          <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+            <p className="text-sm text-zinc-500">Carregando login...</p>
+          </div>
+        </main>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   );
 }

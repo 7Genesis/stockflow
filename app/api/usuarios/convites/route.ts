@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { limiteUsuariosPorPlano } from "@/lib/plan-limits";
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +75,40 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: "Apenas administradores podem criar convites" },
         { status: 403 }
+      );
+    }
+
+    const assinatura = await prisma.assinatura.findUnique({
+      where: {
+        empresaId: usuarioLogado.empresaId,
+      },
+      select: {
+        plano: true,
+      },
+    });
+
+    const plano = assinatura?.plano || "free";
+    const limiteUsuarios = limiteUsuariosPorPlano(plano);
+
+    const totalUsuarios = await prisma.user.count({
+      where: {
+        empresaId: usuarioLogado.empresaId,
+      },
+    });
+
+    const totalConvitesPendentes = await prisma.userInvite.count({
+      where: {
+        empresaId: usuarioLogado.empresaId,
+        status: "pendente",
+      },
+    });
+
+    if (totalUsuarios + totalConvitesPendentes >= limiteUsuarios) {
+      return NextResponse.json(
+        {
+          error: `Seu plano ${plano} permite até ${limiteUsuarios} usuário(s), incluindo convites pendentes.`,
+        },
+        { status: 400 }
       );
     }
 

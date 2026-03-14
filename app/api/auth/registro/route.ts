@@ -1,89 +1,24 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { isEmailDescartavel } from "@/lib/disposable-email";
+import { onlyDigits, validarDocumento } from "@/lib/documento";
 
 export const dynamic = "force-dynamic";
 
 type RegistroBody = {
   empresaNome?: string;
+  tipoDocumento?: "cpf" | "cnpj";
   documento?: string;
   nome?: string;
   email?: string;
   senha?: string;
 };
 
-function onlyDigits(value: string | undefined | null) {
-  return String(value ?? "").replace(/\D/g, "");
-}
-
-function validarCPF(cpf: string) {
-  const valor = onlyDigits(cpf);
-
-  if (valor.length !== 11) return false;
-  if (/^(\d)\1+$/.test(valor)) return false;
-
-  let soma = 0;
-  for (let i = 0; i < 9; i++) {
-    soma += Number(valor[i]) * (10 - i);
-  }
-
-  let resto = (soma * 10) % 11;
-  if (resto === 10) resto = 0;
-  if (resto !== Number(valor[9])) return false;
-
-  soma = 0;
-  for (let i = 0; i < 10; i++) {
-    soma += Number(valor[i]) * (11 - i);
-  }
-
-  resto = (soma * 10) % 11;
-  if (resto === 10) resto = 0;
-
-  return resto === Number(valor[10]);
-}
-
-function validarCNPJ(cnpj: string) {
-  const valor = onlyDigits(cnpj);
-
-  if (valor.length !== 14) return false;
-  if (/^(\d)\1+$/.test(valor)) return false;
-
-  const pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  const pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-
-  let soma = 0;
-  for (let i = 0; i < 12; i++) {
-    soma += Number(valor[i]) * pesos1[i];
-  }
-
-  let resto = soma % 11;
-  const digito1 = resto < 2 ? 0 : 11 - resto;
-
-  if (digito1 !== Number(valor[12])) return false;
-
-  soma = 0;
-  for (let i = 0; i < 13; i++) {
-    soma += Number(valor[i]) * pesos2[i];
-  }
-
-  resto = soma % 11;
-  const digito2 = resto < 2 ? 0 : 11 - resto;
-
-  return digito2 === Number(valor[13]);
-}
-
-function identificarTipoDocumento(documento: string) {
-  const valor = onlyDigits(documento);
-
-  if (valor.length === 11 && validarCPF(valor)) {
-    return "cpf" as const;
-  }
-
-  if (valor.length === 14 && validarCNPJ(valor)) {
-    return "cnpj" as const;
-  }
-
-  return null;
+function adicionarDias(data: Date, dias: number) {
+  const novaData = new Date(data);
+  novaData.setDate(novaData.getDate() + dias);
+  return novaData;
 }
 
 export async function POST(req: Request) {
@@ -91,17 +26,46 @@ export async function POST(req: Request) {
     const body = (await req.json()) as RegistroBody;
 
     const empresaNome = String(body.empresaNome ?? "").trim();
+    const tipoDocumento = String(body.tipoDocumento ?? "").trim().toLowerCase();
     const documento = onlyDigits(body.documento);
     const nome = String(body.nome ?? "").trim();
     const email = String(body.email ?? "").trim().toLowerCase();
     const senha = String(body.senha ?? "").trim();
 
-    if (!empresaNome || !documento || !nome || !email || !senha) {
+    if (!empresaNome || !tipoDocumento || !documento || !nome || !email || !senha) {
       return NextResponse.json(
         {
           error:
-            "Empresa, documento, nome, email e senha são obrigatórios.",
+            "Empresa, tipo de documento, documento, nome, email e senha são obrigatórios.",
         },
+        { status: 400 }
+      );
+    }
+
+    if (empresaNome.length < 3) {
+      return NextResponse.json(
+        { error: "O nome da empresa deve ter pelo menos 3 caracteres." },
+        { status: 400 }
+      );
+    }
+
+    if (tipoDocumento !== "cpf" && tipoDocumento !== "cnpj") {
+      return NextResponse.json(
+        { error: "Tipo de documento inválido." },
+        { status: 400 }
+      );
+    }
+
+    if (!validarDocumento(tipoDocumento, documento)) {
+      return NextResponse.json(
+        { error: "CPF ou CNPJ inválido." },
+        { status: 400 }
+      );
+    }
+
+    if (isEmailDescartavel(email)) {
+      return NextResponse.json(
+        { error: "Emails descartáveis não são permitidos." },
         { status: 400 }
       );
     }
@@ -109,15 +73,6 @@ export async function POST(req: Request) {
     if (senha.length < 6) {
       return NextResponse.json(
         { error: "A senha deve ter pelo menos 6 caracteres." },
-        { status: 400 }
-      );
-    }
-
-    const tipoDocumento = identificarTipoDocumento(documento);
-
-    if (!tipoDocumento) {
-      return NextResponse.json(
-        { error: "CPF ou CNPJ inválido." },
         { status: 400 }
       );
     }
@@ -133,7 +88,7 @@ export async function POST(req: Request) {
 
     if (empresaExistente) {
       return NextResponse.json(
-        { error: "Já existe uma empresa cadastrada com este documento." },
+        { error: "Já existe uma empresa cadastrada com esse documento." },
         { status: 400 }
       );
     }
@@ -155,6 +110,9 @@ export async function POST(req: Request) {
     }
 
     const senhaHash = await bcrypt.hash(senha, 10);
+
+    const agora = new Date();
+    const vencimentoTeste = adicionarDias(agora, 7);
 
     const resultado = await prisma.$transaction(async (tx) => {
       const empresa = await tx.empresa.create({
@@ -191,10 +149,10 @@ export async function POST(req: Request) {
       const assinatura = await tx.assinatura.create({
         data: {
           empresaId: empresa.id,
-          status: "pendente",
+          status: "teste",
           plano: "free",
-          dataInicio: new Date(),
-          dataVencimento: null,
+          dataInicio: agora,
+          dataVencimento: vencimentoTeste,
         },
         select: {
           id: true,
@@ -208,17 +166,35 @@ export async function POST(req: Request) {
       return { empresa, usuario, assinatura };
     });
 
-    return NextResponse.json(
-      {
-        success: true,
-        message:
-          "Cadastro realizado com sucesso. Aguarde a liberação do pagamento e ativação da empresa.",
-        empresa: resultado.empresa,
-        usuario: resultado.usuario,
-        assinatura: resultado.assinatura,
-      },
-      { status: 201 }
-    );
+    const sessionUser = {
+      id: resultado.usuario.id,
+      nome: resultado.usuario.nome,
+      email: resultado.usuario.email,
+      role: resultado.usuario.role as "admin" | "user",
+      empresaId: resultado.usuario.empresaId,
+    };
+
+    const sessionValue = Buffer.from(
+      JSON.stringify(sessionUser),
+      "utf-8"
+    ).toString("base64");
+
+    const response = NextResponse.json({
+      success: true,
+      empresa: resultado.empresa,
+      usuario: sessionUser,
+      assinatura: resultado.assinatura,
+    });
+
+    response.cookies.set("session", sessionValue, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
+
+    return response;
   } catch (error: any) {
     console.error("Erro ao registrar empresa:", error);
 
