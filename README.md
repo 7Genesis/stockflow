@@ -1,6 +1,6 @@
-https://stockflow-cyan.vercel.app)
+# StockFlow
 
-# 🚀 StockFlow
+**Demo:** https://stockflow-cyan.vercel.app
 
 StockFlow é um sistema SaaS de gestão de estoque desenvolvido para ajudar empresas a organizar produtos, movimentações e usuários em um ambiente multiempresa.
 
