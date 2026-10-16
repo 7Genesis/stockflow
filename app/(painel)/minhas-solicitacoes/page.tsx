@@ -45,8 +45,9 @@ function getSessionUser(): UsuarioSession | null {
   if (!cookie) return null;
 
   try {
-    const value = decodeURIComponent(cookie.split("=")[1]);
-    const json = atob(value);
+    const value = decodeURIComponent(cookie.slice("session=".length));
+    // o valor é "<base64>.<assinatura>"; a tela só precisa do payload
+    const json = atob(value.split(".")[0]);
     return JSON.parse(json) as UsuarioSession;
   } catch {
     return null;

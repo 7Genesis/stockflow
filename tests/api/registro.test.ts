@@ -2,6 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { POST } from "@/app/api/auth/registro/route";
+import { lerSessaoAssinada } from "@/lib/session-cookie";
 import { desconectar, limparBanco } from "../helpers/db";
 import { jsonRequest } from "../helpers/session";
 
@@ -39,15 +40,15 @@ describe("POST /api/auth/registro", () => {
     expect(Math.round(dias)).toBe(7);
   });
 
-  it("devolve o cookie de sessão com o usuário e a empresa", async () => {
+  it("devolve o cookie de sessão assinado com o usuário e a empresa", async () => {
     const res = await registrar(valido);
 
     const cookie = res.headers.get("set-cookie") ?? "";
     expect(cookie).toContain("session=");
     const valor = decodeURIComponent(cookie.split("session=")[1].split(";")[0]);
-    const sessao = JSON.parse(Buffer.from(valor, "base64").toString("utf-8"));
+    const sessao = lerSessaoAssinada(valor);
     expect(sessao).toMatchObject({ email: "maria@mercadinho.com", role: "admin" });
-    expect(sessao.empresaId).toEqual(expect.any(String));
+    expect(sessao?.empresaId).toEqual(expect.any(String));
   });
 
   it.each([

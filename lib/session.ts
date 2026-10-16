@@ -1,42 +1,12 @@
 import { cookies } from "next/headers";
+import { SESSION_COOKIE, lerSessaoAssinada, type SessionUser } from "@/lib/session-cookie";
 
-export type SessionUser = {
-  id: string;
-  nome: string;
-  email: string;
-  role: "superadmin" | "admin" | "user";
-  empresaId: string;
-};
+export type { SessionUser };
 
 export async function getSessionUser(): Promise<SessionUser | null> {
   try {
     const cookieStore = await cookies();
-    const session = cookieStore.get("session");
-
-    if (!session?.value) {
-      return null;
-    }
-
-    const json = Buffer.from(session.value, "base64").toString("utf-8");
-    const parsed = JSON.parse(json) as Partial<SessionUser>;
-
-    if (
-      !parsed?.id ||
-      !parsed?.nome ||
-      !parsed?.email ||
-      !parsed?.role ||
-      !parsed?.empresaId
-    ) {
-      return null;
-    }
-
-    return {
-      id: parsed.id,
-      nome: parsed.nome,
-      email: parsed.email,
-      role: parsed.role,
-      empresaId: parsed.empresaId,
-    };
+    return lerSessaoAssinada(cookieStore.get(SESSION_COOKIE)?.value);
   } catch (error) {
     console.error("Erro ao ler sessão:", error);
     return null;

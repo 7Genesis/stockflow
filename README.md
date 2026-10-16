@@ -136,6 +136,10 @@ DATABASE_URL=“postgresql://…”
 
 NEXT_PUBLIC_APP_URL=“http://localhost:3000”
 
+SESSION_SECRET=“um-segredo-longo-e-aleatorio”
+
+O `SESSION_SECRET` assina o cookie de sessão (HMAC-SHA256). É **obrigatório em produção** (sem ele o login falha); em desenvolvimento e nos testes há um valor padrão. Gere um com `openssl rand -hex 32`. Trocar o segredo desloga todo mundo.
+
 ### 3️⃣ Instalar dependências
 
 npm install

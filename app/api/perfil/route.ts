@@ -1,3 +1,4 @@
+import { assinarSessao } from "@/lib/session-cookie";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/session";
 import { NextResponse } from "next/server";
@@ -157,10 +158,7 @@ export async function PUT(request: Request) {
       empresaId: atualizado.empresaId,
     };
 
-    const sessionValue = Buffer.from(
-      JSON.stringify(sessionUser),
-      "utf-8"
-    ).toString("base64");
+    const sessionValue = assinarSessao(sessionUser);
 
     const response = NextResponse.json({
       id: atualizado.id,
