@@ -1,24 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-
-type SessionUser = {
-  id: string;
-  nome: string;
-  email: string;
-  role: "superadmin" | "admin" | "user";
-  empresaId: string;
-};
+import { SESSION_COOKIE, lerSessaoAssinada, type SessionUser } from "@/lib/session-cookie";
 
 function lerSessao(request: NextRequest): SessionUser | null {
-  try {
-    const session = request.cookies.get("session")?.value;
-
-    if (!session) return null;
-
-    const json = Buffer.from(session, "base64").toString("utf-8");
-    return JSON.parse(json) as SessionUser;
-  } catch {
-    return null;
-  }
+  return lerSessaoAssinada(request.cookies.get(SESSION_COOKIE)?.value);
 }
 
 export async function proxy(request: NextRequest) {

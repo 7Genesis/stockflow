@@ -1,3 +1,4 @@
+import { assinarSessao } from "@/lib/session-cookie";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
@@ -174,10 +175,7 @@ export async function POST(req: Request) {
       empresaId: resultado.usuario.empresaId,
     };
 
-    const sessionValue = Buffer.from(
-      JSON.stringify(sessionUser),
-      "utf-8"
-    ).toString("base64");
+    const sessionValue = assinarSessao(sessionUser);
 
     const response = NextResponse.json({
       success: true,

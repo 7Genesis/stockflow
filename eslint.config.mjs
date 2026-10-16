@@ -12,7 +12,13 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Client do Prisma gerado (prisma generate) — não é código do projeto.
+    "generated/**",
   ]),
+  {
+    // Há `any` em código existente (rotas de NF-e e registro); fica como aviso até ser tipado.
+    rules: { "@typescript-eslint/no-explicit-any": "warn" },
+  },
 ]);
 
 export default eslintConfig;
