@@ -1,0 +1,25 @@
+# Blueprint do Render (https://render.com/docs/blueprint-spec).
+# Criar: Dashboard do Render -> New -> Blueprint -> escolher este repositório.
+services:
+  - type: web
+    name: stockflow
+    runtime: node
+    plan: free
+    # `npm ci` roda `prisma generate` (postinstall), que exige DATABASE_URL já no build.
+    # As migrations rodam no build porque preDeployCommand não é garantido no plano gratuito.
+    buildCommand: npm ci && npx prisma migrate deploy && npm run build
+    startCommand: npm start
+    healthCheckPath: /login
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Connection string do PostgreSQL (o Render pergunta o valor ao criar o Blueprint).
+      - key: DATABASE_URL
+        sync: false
+      # URL pública do serviço, ex.: https://stockflow.onrender.com
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+      # Assina o cookie de sessão. O Render gera um valor aleatório; não precisa criar à mão.
+      - key: SESSION_SECRET
+        generateValue: true
