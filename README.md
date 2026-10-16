@@ -144,9 +144,9 @@ O `postinstall` roda `prisma generate`, que exige `DATABASE_URL` definida (no `.
 
 ### 4️⃣ Criar as tabelas
 
-npx prisma db push
+npx prisma migrate deploy
 
-> As migrations em `prisma/migrations` foram geradas em SQLite e não rodam em PostgreSQL (`prisma migrate deploy` falha com `P3019`). Por isso o esquema é aplicado com `db push`, a partir do `prisma/schema.prisma`.
+> O histórico de migrations em `prisma/migrations` é PostgreSQL (baseline `20261016000000_init_postgres`). **Se você já tem um banco criado antes** (com as tabelas existentes), não rode o `deploy` direto: marque o baseline como aplicado com `npx prisma migrate resolve --applied 20261016000000_init_postgres`. Para mudar o schema, use `npx prisma migrate dev --name descricao`.
 
 ### 5️⃣ Iniciar servidor
 
@@ -170,7 +170,7 @@ npm test
 ```
 
 - Sem `TEST_DATABASE_URL`, os testes usam `postgresql://postgres:postgres@localhost:5432/stockflow_test`.
-- Antes da suíte, o schema `public` do banco de teste é **apagado e recriado** com `prisma db push`. Por segurança, o nome do banco precisa terminar em `_test`; qualquer outro nome faz a suíte abortar.
+- Antes da suíte, o schema `public` do banco de teste é **apagado e recriado** e as migrations são aplicadas com `prisma migrate deploy`. Por segurança, o nome do banco precisa terminar em `_test`; qualquer outro nome faz a suíte abortar.
 - O que está coberto: movimentação de estoque (entrada, saída, estoque insuficiente, isolamento por empresa), fluxo de solicitação (criar, aprovar com baixa de estoque, recusar, cancelar, permissões de admin e dono, estado já resolvido), registro de empresa (validação de CPF/CNPJ, e-mail descartável, duplicidade, assinatura de teste de 7 dias) e funções puras de `lib/` (documento, limites de plano, e-mail descartável).
 - Não há testes de componentes React nem de ponta a ponta no navegador, e as rotas de NF-e, fornecedores, relatórios e convites ainda não têm testes.
 
