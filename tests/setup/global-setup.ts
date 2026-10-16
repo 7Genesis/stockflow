@@ -2,9 +2,8 @@ import { execSync } from "node:child_process";
 import { Client } from "pg";
 import { testDatabaseUrl } from "./test-database";
 
-// Recria o schema do banco de teste a partir do prisma/schema.prisma.
-// Usa `prisma db push` (e não `migrate deploy`) porque as migrations versionadas
-// em prisma/migrations estão em dialeto SQLite e não rodam em PostgreSQL.
+// Recria o banco de teste aplicando as migrations de prisma/migrations (`migrate deploy`),
+// o mesmo caminho usado em produção.
 // Por segurança, recusa rodar contra um banco cujo nome não termine em "_test".
 export default async function globalSetup() {
   const url = testDatabaseUrl();
@@ -27,13 +26,13 @@ export default async function globalSetup() {
   }
 
   try {
-    execSync("npx prisma db push", {
+    execSync("npx prisma migrate deploy", {
       stdio: "pipe",
       encoding: "utf8",
       env: { ...process.env, DATABASE_URL: url },
     });
   } catch (error) {
     const { stdout, stderr } = error as { stdout?: string; stderr?: string };
-    throw new Error(`prisma db push falhou:\n${stdout ?? ""}${stderr ?? ""}`);
+    throw new Error(`prisma migrate deploy falhou:\n${stdout ?? ""}${stderr ?? ""}`);
   }
 }
