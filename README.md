@@ -128,11 +128,7 @@ Perfis disponíveis:
 
 git clone https://github.com/7Genesis/stockflow
 
-### 2️⃣ Instalar dependências
-
-npm install
-
-### 3️⃣ Configurar variáveis de ambiente
+### 2️⃣ Configurar variáveis de ambiente
 
 Criar arquivo `.env`
 
@@ -140,13 +136,45 @@ DATABASE_URL=“postgresql://…”
 
 NEXT_PUBLIC_APP_URL=“http://localhost:3000”
 
-### 4️⃣ Rodar migrations
+### 3️⃣ Instalar dependências
 
-npx prisma migrate dev
+npm install
+
+O `postinstall` roda `prisma generate`, que exige `DATABASE_URL` definida (no `.env` ou no ambiente). Sem ela o `npm install` termina com erro.
+
+### 4️⃣ Criar as tabelas
+
+npx prisma db push
+
+> As migrations em `prisma/migrations` foram geradas em SQLite e não rodam em PostgreSQL (`prisma migrate deploy` falha com `P3019`). Por isso o esquema é aplicado com `db push`, a partir do `prisma/schema.prisma`.
 
 ### 5️⃣ Iniciar servidor
 
 npm run dev
+
+---
+
+# ✅ Como rodar os testes
+
+Os testes usam [Vitest](https://vitest.dev) e um **PostgreSQL de verdade** (as rotas de API são chamadas direto, com a sessão simulada).
+
+```bash
+# 1. um Postgres descartável (ou use o seu e crie o banco stockflow_test)
+docker run -d --rm --name stockflow-pg-test -p 5432:5432 \
+  -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=stockflow_test postgres:16
+
+# 2. instalar (o postinstall precisa de DATABASE_URL) e rodar a suíte
+export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/stockflow_test
+npm install
+npm test
+```
+
+- Sem `TEST_DATABASE_URL`, os testes usam `postgresql://postgres:postgres@localhost:5432/stockflow_test`.
+- Antes da suíte, o schema `public` do banco de teste é **apagado e recriado** com `prisma db push`. Por segurança, o nome do banco precisa terminar em `_test`; qualquer outro nome faz a suíte abortar.
+- O que está coberto: movimentação de estoque (entrada, saída, estoque insuficiente, isolamento por empresa), fluxo de solicitação (criar, aprovar com baixa de estoque, recusar, cancelar, permissões de admin e dono, estado já resolvido), registro de empresa (validação de CPF/CNPJ, e-mail descartável, duplicidade, assinatura de teste de 7 dias) e funções puras de `lib/` (documento, limites de plano, e-mail descartável).
+- Não há testes de componentes React nem de ponta a ponta no navegador, e as rotas de NF-e, fornecedores, relatórios e convites ainda não têm testes.
+
+O workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda `npm ci`, `npm run lint`, `npm run build` e `npm test` (com um serviço PostgreSQL) a cada push na `main` e a cada pull request. O lint tem avisos, mas nenhum erro.
 
 ---
 
