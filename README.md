@@ -1,10 +1,23 @@
 # StockFlow
 
-**Demo:** https://stockflow-cyan.vercel.app
+[![CI](https://github.com/7Genesis/stockflow/actions/workflows/ci.yml/badge.svg)](https://github.com/7Genesis/stockflow/actions/workflows/ci.yml)
+[![Licença: MIT](https://img.shields.io/badge/licença-MIT-blue.svg)](LICENSE)
+
+**Demo:** https://stockflow-cyan.vercel.app (crie uma empresa em `/registro` para testar)
 
 StockFlow é um sistema SaaS de gestão de estoque desenvolvido para ajudar empresas a organizar produtos, movimentações e usuários em um ambiente multiempresa.
 
 O projeto foi construído com foco em arquitetura real de produto, incluindo autenticação, controle de acesso, gestão de usuários e estrutura preparada para escalabilidade.
+
+---
+
+# 🖼 Capturas de tela
+
+Dados fictícios, em uma instância local.
+
+![Dashboard com indicadores, alertas de estoque baixo e gráficos de entradas e saídas](docs/dashboard.png)
+
+![Tela de movimentações com histórico de entradas e saídas](docs/movimentacoes.png)
 
 ---
 
@@ -33,9 +46,13 @@ O projeto foi construído com foco em arquitetura real de produto, incluindo aut
 - estrutura preparada para relatórios e analytics
 
 ### 📦 Gestão de estoque
-- cadastro de produtos
-- movimentações de entrada e saída
-- estrutura preparada para relatórios
+- cadastro de produtos, com SKU e código de barras (leitura pela câmera)
+- movimentações de entrada e saída, sem permitir saldo negativo
+- alertas de estoque baixo, a partir do estoque mínimo de cada produto
+- importação de NF-e (arquivo XML), com pré-visualização
+- fornecedores e relatórios de movimentações, com exportação em CSV e Excel
+- solicitações de saída com aprovação de um admin
+- histórico de atividade
 
 ### 💳 Controle de planos
 - plano **Free**
@@ -155,6 +172,16 @@ npx prisma migrate deploy
 ### 5️⃣ Iniciar servidor
 
 npm run dev
+
+Abra http://localhost:3000/registro para criar a primeira empresa e o usuário admin dela. Não há usuários de demonstração: o projeto não traz nenhuma conta com senha pronta.
+
+### 6️⃣ (Opcional) Criar um superadmin
+
+O superadmin gerencia as empresas e assinaturas (`/admin`). Crie um com variáveis de ambiente, sem gravar a senha no código:
+
+SUPERADMIN_EMAIL="voce@exemplo.com" SUPERADMIN_SENHA="uma-senha-forte" npm run superadmin
+
+A senha precisa ter pelo menos 8 caracteres. Se já existir um usuário com esse e-mail, nada é alterado.
 
 ---
 
