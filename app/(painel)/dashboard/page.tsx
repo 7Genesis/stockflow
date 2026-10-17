@@ -237,8 +237,8 @@ export default function DashboardPage() {
                 <XAxis dataKey="data" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="entrada" name="Entradas" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="saida" name="Saídas" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="entrada" name="Entradas" fill="#16a34a" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="saida" name="Saídas" fill="#dc2626" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
