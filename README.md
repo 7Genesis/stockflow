@@ -184,11 +184,23 @@ O workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda `npm ci`,
 
 # 🌐 Deploy
 
-O projeto pode ser publicado facilmente utilizando:
+### Render
 
-- **Vercel**
-- **Supabase / PostgreSQL**
-- **Prisma**
+O arquivo [`render.yaml`](render.yaml) descreve o serviço (plano `free`, Node 22). Para publicar:
+
+1. No Render: **New → Blueprint** e escolha este repositório.
+2. Informe `DATABASE_URL` (PostgreSQL) e `NEXT_PUBLIC_APP_URL` (a URL do serviço) quando o Render perguntar. O `SESSION_SECRET` é gerado pelo próprio Render.
+3. O build roda `npm ci`, `prisma migrate deploy` e `next build`; então o banco precisa estar acessível durante o build.
+
+Pontos de atenção:
+
+- **Banco que já tem tabelas:** antes do primeiro deploy, marque o baseline como aplicado, com a `DATABASE_URL` desse banco: `npx prisma migrate resolve --applied 20261016000000_init_postgres`. Em banco vazio, o `migrate deploy` do build cria tudo.
+- **Cron de assinaturas:** o `vercel.json` agenda `/api/cron/verificar-assinaturas`, e isso só funciona no Vercel. No Render, chame essa rota (GET) com um agendador externo ou um Cron Job do Render.
+- Este `render.yaml` não foi testado no Render; foi escrito a partir da documentação do Blueprint.
+
+### Vercel
+
+O projeto também publica no Vercel (`vercel.json`). Defina `DATABASE_URL`, `NEXT_PUBLIC_APP_URL` e `SESSION_SECRET` (gere com `openssl rand -hex 32`) nas variáveis de ambiente do projeto.
 
 ---
 
